@@ -1,5 +1,5 @@
-
 ssh() {
+  clear
   echo '开始一键安装ssh'
   sudo apt install openssh-server
   sudo passwd root
@@ -9,12 +9,14 @@ ssh() {
   cat << EOF
 **************************************
 *       安装ssh成功         *
+*       已经开启root访问        *
 *       默认端口为22         *
 **************************************
 EOF
 }
 
 samba() {
+  clear
   echo '开始一键安装samba'
   sudo apt-get install samba samba-common
   sed '$a\[share]\\n  path=/root\\n  public=yes\\n  writable=yes\\n  available=yes' /etc/samba/smb.conf
@@ -33,7 +35,6 @@ EOF
 }
 
 ql1() {
-  echo '正在创建ql'
   docker run -dit \
 -v $PWD/ql/config:/ql/config \
 -v $PWD/ql/log:/ql/log \
@@ -132,6 +133,7 @@ EOF
 
 
 ql() {
+  clear
   echo "请选择您需要进行的操作:"
     echo "  1) 安装 ql"
     echo "  2) 安装 ql2"
@@ -159,7 +161,7 @@ then
     cat << EOF
 **************************************
 *       Welcome to My tools          *
-*       Author: miaomiaomiao         *
+*       Author: 喵喵喵         *
 *       Date: 2022/3/8               *
 **************************************
 EOF
