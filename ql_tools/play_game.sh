@@ -137,6 +137,8 @@ ql() {
     echo "  2) 安装 ql2"
     echo "  3) 安装 ql3"
     echo "  4) 安装 ql4"
+    echo "  5) 返回上一级"
+    echo "  6) 退出脚本"
     echo ""
     echo -n "请输入编号: "
     read N
@@ -145,6 +147,8 @@ ql() {
     2) ql2 ;;
     3) ql3 ;;
     4) ql4 ;;
+    5) main;;
+    6) exit ;;
     *) echo "输入错误！" ;;
     esac
 }
