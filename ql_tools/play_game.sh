@@ -19,7 +19,7 @@ samba() {
   clear
   echo '开始一键安装samba'
   sudo apt-get install samba samba-common
-  sed '$a\[share]\\n  path=/root\\n  public=yes\\n  writable=yes\\n  available=yes' /etc/samba/smb.conf
+  sed -i '$a\[share]\n  path=/root\n  public=yes\n  writable=yes\n  available=yes' /etc/samba/smb.conf
   sduo  touch /etc/samba/smbpasswd
   sudo smbpasswd -a root
   sudo /etc/init.d/smbd restart
