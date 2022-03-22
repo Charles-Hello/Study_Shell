@@ -5,6 +5,8 @@ ssh() {
   sudo passwd root
   sudo sed -i "s/PermitRootLogin prohibit-password/PermitRootLogin yes/g" /etc/ssh/sshd_config
   sudo systemctl restart sshd
+  sudo ufw allow ssh #打开防火墙
+  sudo iptables -A INPUT -p tcp --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT  #开放22端口
   echo 'ssh安装成功！'
   cat << EOF
 **************************************
@@ -19,8 +21,17 @@ samba() {
   clear
   echo '开始一键安装samba'
   sudo apt-get install samba samba-common
-  sed -i '$a\[share]\n  path=/root\n  public=yes\n  writable=yes\n  available=yes' /etc/samba/smb.conf
-  sduo  touch /etc/samba/smbpasswd
+  FIND_FILE="/etc/samba/smb.conf"
+  FIND_STR="writable=yes"
+  # 判断匹配函数，匹配函数不为0，则包含给定字符
+  if [ `grep -c "$FIND_STR" $FIND_FILE` -ne '0' ];then
+      echo "已经挂载了共享目录,跳过"
+  else
+    read -p "请输入你想要共享的文档：" path
+    sed -i "\$a\[share]\n  path=/$path\n  public=yes\n  writable=yes\n  available=yes" /etc/samba/smb.conf
+    fi
+  sudo  touch /etc/samba/smbpasswd
+  echo '请输入你的密码'
   sudo smbpasswd -a root
   sudo /etc/init.d/smbd restart
   echo 'samba局域网安装成功！'
@@ -29,7 +40,8 @@ samba() {
 *       安装samba成功             *
 *       连接smb://本机的ip        *
 *       默认以share为目录名字        *
-*       默认以root为共享目录        *
+*       账号为：root            *
+*       密码为：你设置的密码        *
 **************************************
 EOF
 }
@@ -43,12 +55,13 @@ ql1() {
 -v $PWD/ql/raw:/ql/raw \
 -v $PWD/ql/scripts:/ql/scripts \
 -v $PWD/ql/jbot:/ql/jbot\
+-v $PWD/ql/deps:/ql/deps\
 -p 5700:5700 \
 --name qinglong \
 --hostname qinglong \
 --restart unless-stopped \
 whyour/qinglong:latest
-  echo 'ql容器搭建成功！'
+  echo "ql 容器搭建成功！"
   cat << EOF
 **************************************
 *       搭建容器🐉1 成功             *
@@ -56,7 +69,7 @@ whyour/qinglong:latest
 **************************************
 EOF
 }
-
+#
 ql2() {
   echo '正在创建ql2'
     docker run -dit \
@@ -159,11 +172,12 @@ main() {
     if [[ $EUID -eq 0 ]]
 then
     cat << EOF
-**************************************
-*       Welcome to My tools          *
-*       Author: 喵喵喵         *
-*       Date: 2022/3/8               *
-**************************************
+  ███████╗███╗   ███╗██╗██╗     ███████╗
+  ██╔════╝████╗ ████║██║██║     ██╔════╝
+  ███████╗██╔████╔██║██║██║     █████╗
+  ╚════██║██║╚██╔╝██║██║██║     ██╔══╝
+  ███████║██║ ╚═╝ ██║██║███████╗███████╗
+  ╚══════╝╚═╝     ╚═╝╚═╝╚══════╝╚══════╝
 EOF
     echo "请选择您需要进行的操作:"
     echo "  1) 安装 ssh"
