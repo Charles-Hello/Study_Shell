@@ -48,19 +48,19 @@ EOF
 
 ql1() {
   docker run -dit \
--v $PWD/ql/config:/ql/config \
--v $PWD/ql/log:/ql/log \
--v $PWD/ql/db:/ql/db \
--v $PWD/ql/repo:/ql/repo \
--v $PWD/ql/raw:/ql/raw \
--v $PWD/ql/scripts:/ql/scripts \
--v $PWD/ql/jbot:/ql/jbot\
--v $PWD/ql/deps:/ql/deps\
--p 5700:5700 \
---name qinglong \
---hostname qinglong \
---restart unless-stopped \
-whyour/qinglong:latest
+  -v $PWD/ql/config:/ql/config \
+  -v $PWD/ql/log:/ql/log \
+  -v $PWD/ql/db:/ql/db \
+  -v $PWD/ql/repo:/ql/repo \
+  -v $PWD/ql/raw:/ql/raw \
+  -v $PWD/ql/scripts:/ql/scripts \
+  -v $PWD/ql/jbot:/ql/jbot\
+  -v $PWD/ql/deps:/ql/deps\
+  -p 5700:5700 \
+  --name qinglong \
+  --hostname qinglong \
+  --restart unless-stopped \
+  whyour/qinglong:latest
   echo "ql 容器搭建成功！"
   cat << EOF
 **************************************
@@ -69,10 +69,10 @@ whyour/qinglong:latest
 **************************************
 EOF
 }
-#
+
 ql2() {
   echo '正在创建ql2'
-    docker run -dit \
+  docker run -dit \
   -v $PWD/ql2/config:/ql/config \
   -v $PWD/ql2/log:/ql/log \
   -v $PWD/ql2/db:/ql/db \
@@ -122,7 +122,7 @@ EOF
 
 ql4() {
   echo '正在创建ql4'
-    docker run -dit \
+  docker run -dit \
   -v $PWD/ql4/config:/ql/config \
   -v $PWD/ql4/log:/ql/log \
   -v $PWD/ql4/db:/ql/db \
