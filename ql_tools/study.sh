@@ -47,123 +47,51 @@ EOF
 }
 
 ql1() {
+  clear
+  read -p "请输入你想创建ql容器几：" name
+  val=`expr 2 \* $name - 1 `
+  _ip=`expr 5700 + $val `
   docker run -dit \
-  -v $PWD/ql/config:/ql/config \
-  -v $PWD/ql/log:/ql/log \
-  -v $PWD/ql/db:/ql/db \
-  -v $PWD/ql/repo:/ql/repo \
-  -v $PWD/ql/raw:/ql/raw \
-  -v $PWD/ql/scripts:/ql/scripts \
-  -v $PWD/ql/jbot:/ql/jbot\
-  -v $PWD/ql/deps:/ql/deps\
-  -p 5700:5700 \
-  --name qinglong \
+  -v $PWD/ql$name/config:/ql/config \
+  -v $PWD/ql$name/log:/ql/log \
+  -v $PWD/ql$name/db:/ql/db \
+  -v $PWD/ql$name/repo:/ql/repo \
+  -v $PWD/ql$name/raw:/ql/raw \
+  -v $PWD/ql$name/scripts:/ql/scripts \
+  -v $PWD/ql$name/jbot:/ql/jbot\
+  -v $PWD/ql$name/deps:/ql/deps\
+  -p $_ip:5700 \
+  --name qinglong$name \
   --hostname qinglong \
   --restart unless-stopped \
   whyour/qinglong:latest
-  echo "ql 容器搭建成功！"
-  cat << EOF
-**************************************
-*       搭建容器🐉1 成功             *
-*       访问面板: 127.0.0.1:5700        *
-**************************************
-EOF
-}
-
-ql2() {
-  echo '正在创建ql2'
-  docker run -dit \
-  -v $PWD/ql2/config:/ql/config \
-  -v $PWD/ql2/log:/ql/log \
-  -v $PWD/ql2/db:/ql/db \
-  -v $PWD/ql2/repo:/ql/repo \
-  -v $PWD/ql2/raw:/ql/raw \
-  -v $PWD/ql2/scripts:/ql/scripts \
-  -v $PWD/ql2/jbot:/ql/jbot\
-  -p 5703:5700 \
-  --name qinglong2 \
-  --hostname qinglong \
-  --restart unless-stopped \
-  whyour/qinglong:latest
-  echo 'ql2容器搭建成功！'
-  cat << EOF
-**************************************
-*       搭建容器🐉2 成功             *
-*       访问面板: 127.0.0.1:5703        *
-***************************************
-EOF
+  if [ $? -eq 0 ];then
+  echo "ql$name 容器搭建成功！"
+echo "**************************************"
+echo "*       搭建容器🐉$name 成功               *"
+echo "*       访问面板: 127.0.0.1:$_ip  *"
+echo "**************************************"
+else
+  echo "命令失败"
+fi
 }
 
 
-
-ql3() {
-  echo '正在创建ql3'
-  docker run -dit \
-  -v $PWD/ql3/config:/ql/config \
-  -v $PWD/ql3/log:/ql/log \
-  -v $PWD/ql3/db:/ql/db \
-  -v $PWD/ql3/repo:/ql/repo \
-  -v $PWD/ql3/raw:/ql/raw \
-  -v $PWD/ql3/scripts:/ql/scripts \
-  -v $PWD/ql3/jbot:/ql/jbot\
-  -p 5705:5700 \
-  --name qinglong3 \
-  --hostname qinglong \
-  --restart unless-stopped \
-  whyour/qinglong:latest
-  echo 'ql3容器搭建成功！'
-  cat << EOF
-**************************************
-*       搭建容器🐉3 成功             *
-*       访问面板: 127.0.0.1:5705        *
-**************************************
-EOF
-}
-
-ql4() {
-  echo '正在创建ql4'
-  docker run -dit \
-  -v $PWD/ql4/config:/ql/config \
-  -v $PWD/ql4/log:/ql/log \
-  -v $PWD/ql4/db:/ql/db \
-  -v $PWD/ql4/repo:/ql/repo \
-  -v $PWD/ql4/raw:/ql/raw \
-  -v $PWD/ql4/scripts:/ql/scripts \
-  -v $PWD/ql4/jbot:/ql/jbot\
-  -p 5707:5700 \
-  --name qinglong4 \
-  --hostname qinglong \
-  --restart unless-stopped \
-  whyour/qinglong:latest
-  echo 'ql4容器搭建成功！'
-  cat << EOF
-**************************************
-*       搭建容器🐉4 成功             *
-*       访问面板: 127.0.0.1:5707        *
-**************************************
-EOF
-}
 
 
 ql() {
   clear
   echo "请选择您需要进行的操作:"
     echo "  1) 安装 ql"
-    echo "  2) 安装 ql2"
-    echo "  3) 安装 ql3"
-    echo "  4) 安装 ql4"
-    echo "  5) 返回上一级"
-    echo "  6) 退出脚本"
+    echo "  2) 返回上一级"
+    echo "  3) 退出脚本"
     echo ""
     echo -n "请输入编号: "
     read N
     case $N in
     1) ql1 ;;
-    2) ql2 ;;
-    3) ql3 ;;
-    4) ql4 ;;
-    5) main;;
-    6) exit ;;
+    2) main;;
+    3) exit ;;
     *) echo "输入错误！" ;;
     esac
 }

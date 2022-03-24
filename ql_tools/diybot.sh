@@ -7,7 +7,7 @@ fi
 dir_bot=$dir_root/jbot
 dir_repo=$dir_root/repo
 dir_config=$dir_root/config
-
+diybot_config_diybotset=/ql/config/user.session
 bot_yilai(){
   clear
   echo -e "\n安装bot依赖...\n"
@@ -26,6 +26,18 @@ bot_yilai(){
   pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple/
   pip3 --default-timeout=100 install -r requirements.txt --no-cache-dir
   echo -e "\n全部依赖安装成功...\n"
+
+  read -p "请输入你的机器人的token：" token
+  sed -ri "s/\"bot_token\":"\(.*\)"/\"bot_token\":\"$token\""/ /ql/config/bot.json
+
+  echo "检测 user 文件 "
+  if [ -f $diybot_config_diybotset ]; then
+    echo "  └—结果：user缓存存在，正在删除～"
+    rm $dir_config/user.session
+    rm $dir_config/user.session-journal
+  else
+    echo "  └—结果：不存在，安全登录！"
+  fi
 
 
   cd $dir_root
