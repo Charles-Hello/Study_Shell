@@ -8,7 +8,7 @@
 """
 import requests
 requests.packages.urllib3.disable_warnings()
-from  config import *
+from miao_config import *
 
 '''
 cron: 0 0-23/3 * * *

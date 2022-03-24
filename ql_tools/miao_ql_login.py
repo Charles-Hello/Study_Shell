@@ -14,7 +14,7 @@ import os
 requests.packages.urllib3.disable_warnings()
 import time
 import requests
-from config import *
+from miao_config import *
 '''
 cron: 0 0-23/7 * * *
 new Env('ql自动登陆');

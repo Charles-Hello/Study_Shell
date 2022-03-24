@@ -14,6 +14,7 @@ import os
 requests.packages.urllib3.disable_warnings()
 import time
 from aligo import Aligo
+from miao_config import *
 import logging
 import os
 import sys
@@ -23,12 +24,9 @@ from threading import Thread
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)
 
-###
-#   默认根路径为 root
-###
-#这里填写root里面的你想要保存的ql的路径   ps : 我的路径为  /root/xxxx
-path_list = ['xxxx','xxxxx','qqq']       #写root后面的保存的目录
-QLBK_MAX_FLIES = 1  # 最大备份保留数量默认为1
+#这里填写root里面的你想要保存的ql的路径
+path_list = ['ql','ql2','ql3','ql4','ql10']
+QLBK_MAX_FLIES = 1  # 最大备份保留数量
 QLBK_EXCLUDE_NAMES = ['log', '.git', '.github',
                       'node_modules', 'backups']  # 排除目录名
 
@@ -42,7 +40,8 @@ def start1(pathpro):
     def env(key):
         return os.environ.get(key)
 
-    os.chdir(f'/root/{pathpro}/')  # 设置运行目录
+    os.chdir(f'/root/{pathpro}/')
+
     if env("QLBK_EXCLUDE_NAMES"):
         QLBK_EXCLUDE_NAMES = env("QLBK_EXCLUDE_NAMES")
         logger.info(f'检测到设置变量 {QLBK_EXCLUDE_NAMES}')
@@ -59,14 +58,16 @@ def start1(pathpro):
     """开始备份"""
     logger.info('将所需备份目录文件进行压缩...')
     retval = os.getcwd()
+    print('@@@@@@@修改！！！！！！'+retval)
     mkdir(QLBK_BACKUPS_PATH,QLBK_BACKUPS_PATH)
     now_time = time.strftime("%Y%m%d_%H%M%S", time.localtime())
     files_name = f'{QLBK_BACKUPS_PATH}/qinglong_{now_time}.tar.gz'
     logger.info(f'创建备份文件: {files_name}')
     if make_targz(files_name, retval):
-        print('备份文件压缩完成...开始上传至阿里云盘！')
+        send_msg(user_id, tnanko, '备份文件压缩完成...开始上传至阿里云盘！')
         logger.info('备份文件压缩完成...开始上传至阿里云盘')
-
+        #QLBK_BACKUPS_PATH = f'/root/{pathpro}/backups'  # 备份目标目录
+        #pathpro =ql
         remote_folder = ali.get_file_by_path(f'{QLBK_BACKUPS_PATH}')  # 云盘目录
         ali.sync_folder(f'{QLBK_BACKUPS_PATH}/',  # 上传至网盘
                         flag=True,
@@ -76,16 +77,16 @@ def start1(pathpro):
         text = f'已备份至阿里网盘:\nql/{QLBK_BACKUPS_PATH}/qinglong_{now_time}.tar.gz\n' \
                f'\n备份完成时间:\n{message_up_time}\n'
         try:
-            print(text)
-            logger.info(text)
+            send_msg(user_id, tnanko, text)
+
         except:
-            print('通知发送失败')
+            send_msg(user_id, tnanko, '通知发送失败')
             logger.info("通知发送失败")
         logger.info('---------------------备份完成---------------------')
-        print(f'--{pathpro}备份完成--')
+        send_msg(user_id, tnanko, f'--{pathpro}备份完成--')
     else:
         try:
-            print('备份压缩失败,请检查日志')
+            send_msg(user_id, tnanko,'备份压缩失败,请检查日志')
         except:
             logger.info("通知发送失败")
 
@@ -173,19 +174,27 @@ def check_files(files_all, files_num, backup_files, QLBK_MAX_FLIES):
 
 if __name__ == '__main__':
     try:
-        #我采用网址加ip获取扫码
         ali = Aligo(port=8080)
+        send_msg(user_id, tnanko, '如果我显示没有登陆\n则去下面扫码\nhttp://192.168.1.145:8080')
         #直接图像扫码
         # ali = Aligo(level=logging.INFO, show=show)
+        # 提供 port 参数即可, 之后打开浏览器访问 http://<YOUR_IP>:<port>
         try:
             res = requests.get('127.0.0.1:8080').status_code
-            print('请前往127.0.0.1:8080进行扫码登陆！')
+            send_msg(user_id,tnanko,'请前往网址进行扫码登陆！')
+            print('请前往网址进行扫码登陆！')
         except Exception as e:
             print(e)
+            send_msg(user_id, tnanko, '阿里云盘成功登陆！')
             print('阿里云盘成功登陆！')
 
     except:
         logger.info('登录失败')
+        send_msg(user_id, tnanko, '登录失败！')
+        try:
+            send_msg(user_id, tnanko, '阿里网盘登录失败,请手动重新运行本脚本登录！')
+        except:
+            logger.info("通知发送失败")
     threads = []
     for pathpro in path_list:
         print('*'*20+pathpro+'*'*20)

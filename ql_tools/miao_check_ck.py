@@ -15,7 +15,7 @@ import os
 requests.packages.urllib3.disable_warnings()
 import time
 import json
-from config import *
+from miao_config import *
 '''
 cron: 0 0-23/2 * * *
 new Env('ck失效机器人推送');
