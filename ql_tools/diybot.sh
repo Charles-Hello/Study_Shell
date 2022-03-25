@@ -28,7 +28,7 @@ bot_yilai(){
   echo -e "\n全部依赖安装成功...\n"
 
   read -p "请输入你的机器人的token：" token
-  sed -ri "s/\"bot_token\":"\(.*\)"/\"bot_token\":\"$token\""/ /ql/config/bot.json
+  sed -ri "s/\"bot_token\":"\(.*\)"/\"bot_token\":\"$token\","/ /ql/config/bot.json
 
   echo "检测 user 文件 "
   if [ -f $diybot_config_diybotset ]; then
