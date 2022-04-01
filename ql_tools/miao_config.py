@@ -24,11 +24,6 @@ url = '127.0.0.1:5600'
 # 填写你的面板账号密码
 username = '1140601003'
 password = 'ken1140601003@@@'
-
-
-
-
-
 dormitory = '12361142051@chatroom'
 tnanko = 'wxid_xq2w7jl6cbi811'
 jd_xianbao = '5748551094@chatroom'

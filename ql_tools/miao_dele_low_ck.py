@@ -6,9 +6,10 @@
 @IDE ：PyCharm
 @Motto：ABC(Always Be Coding)
 """
-import requests
+
 requests.packages.urllib3.disable_warnings()
 from  miao_config import *
+import requests
 '''
 cron: 0 0-23/3 * * *
 new Env('ql删除过期ck');

@@ -195,15 +195,10 @@ if __name__ == '__main__':
             send_msg(user_id, tnanko, '阿里网盘登录失败,请手动重新运行本脚本登录！')
         except:
             logger.info("通知发送失败")
-    threads = []
     for pathpro in path_list:
         print('*'*20+pathpro+'*'*20)
         nowtime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         logger.info(
             '---------' + str(nowtime) + ' 备份程序开始执行------------')
         logger.info('登录阿里云盘')
-        threads.append(
-            Thread(target=start1,
-                   args=(pathpro,)))
-    for t in threads:
-        t.start()
+        start1(pathpro)

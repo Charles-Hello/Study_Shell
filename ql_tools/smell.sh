@@ -49,6 +49,8 @@ EOF
 ql1() {
   clear
   read -p "请输入你想创建ql容器几：" name
+  echo "输入latest或者2.11.3或者其他"
+  read -p "请输入你想ql版本：" version
   val=`expr 2 \* $name - 1 `
   _ip=`expr 5700 + $val `
   docker run -dit \
@@ -64,7 +66,7 @@ ql1() {
   --name qinglong$name \
   --hostname qinglong \
   --restart unless-stopped \
-  whyour/qinglong:latest
+  whyour/qinglong:"$version"
   if [ $? -eq 0 ];then
   echo "ql$name 容器搭建成功！"
 echo "**************************************"
