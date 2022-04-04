@@ -48,3 +48,35 @@ def send_text_msg(robot_wxid, to_wxid, msg):
     data["msg"] = msg
     result = ujson.dumps(data)
     return requests.post(url=API_URL, data=result, headers=headers)
+
+
+# def env_status():
+#     headers = {
+#         'Connection': 'keep-alive',
+#         'Authorization': token,
+#         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.74 Safari/537.36 Edg/99.0.1150.55',
+#     }
+#     response = requests.get(f'http://{url}/api/envs',
+#                             headers=headers,verify=False).json()
+#     return response
+
+# def enable_ck(id, url, client_id, client_secret):
+#     headers = {
+#         'Connection': 'keep-alive',
+#         'Accept': 'application/json',
+#         'Authorization': 'Bearer %s' % get_token(
+#             url, client_id, client_secret),
+#         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.82 Safari/537.36 Edg/98.0.1108.51',
+#         'Content-Type': 'application/json;charset=UTF-8',
+#         'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
+#     }
+#
+#     data = f'[{id}]'
+#
+#     response = requests.put(
+#         f'http://{url}/open/envs/enable',
+#         headers=headers, data=data, verify=False)
+#
+#     print(response.text)
+
+

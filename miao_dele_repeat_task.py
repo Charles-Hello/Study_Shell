@@ -10,7 +10,7 @@ import requests
 requests.packages.urllib3.disable_warnings()
 from  miao_config import *
 '''
-cron: 0 0-23/3 * * *
+cron: 0 0-23/1 * * *
 new Env('ql删除重复任务');
 '''
 
