@@ -15,6 +15,7 @@ bot_json=$dir_config/bot.
 
 
 
+
 url="https://github.com/Charles-Hello/ql_diybot.git"
 repo_path="${dir_repo}/dockerbot"
 
@@ -191,6 +192,11 @@ start() {
   echo "稍等片刻后，输入手机号（带国家代码）和 Telegram 验证码以完成登录"
   echo "登陆完成后使用 Ctrl + C 退出脚本，并使用以下命令启动 user 监控"
   echo ""
+  echo "如果没有显示登陆手机号则通过下面口令查看log报错！"
+  echo "cat /ql/log/bot/run.log"
+  echo "user.py-->[Errno 9] Bad file descriptor   user没有登陆"
+  echo "user登陆的open出现证明网络问题或者等待几分钟再重试"
+
   if [ -d "/jd" ]
     then echo "cd $dir_root;pm2 restart jbot"
   else

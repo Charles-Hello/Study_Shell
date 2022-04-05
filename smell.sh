@@ -31,6 +31,7 @@ samba() {
     sed -i "\$a\[share]\n  path=/$path\n  public=yes\n  writable=yes\n  available=yes" /etc/samba/smb.conf
     fi
   sudo  touch /etc/samba/smbpasswd
+  echo '当前登录linux的用户名一致即root'
   echo '请输入你的密码'
   sudo smbpasswd -a root
   sudo /etc/init.d/smbd restart
@@ -80,10 +81,20 @@ fi
 }
 
 backup(){
-  wget https://raw.githubusercontent.com/Charles-Hello/study_shell/master/ql_backup.py && echo "请先修改好ql_backup.py的里面的内容"
+  wget https://raw.githubusercontent.com/Charles-Hello/study_shell/master/ql_backup.py && echo "请先修改好backup.py的里面的内容再运行python3 ql_backup.py"
+}
+
+up_apt(){
+  echo 'apt-get 安装程序运行'
+  sudo apt-get update
+  sudo apt-get upgrade
+  sudo apt-get -f install
 }
 
 
+install_docker(){
+  curl -sSL https://get.daocloud.io/docker | sh
+}
 
 ql() {
   clear
@@ -117,8 +128,10 @@ EOF
     echo "  1) 安装 ssh"
     echo "  2) 安装 samba"
     echo "  3) 安装青龙容器"
-    echo "  4) 备份青龙"
-    echo "  5) 退出脚本"
+    echo "  4) 备份服务器目录"
+    echo "  5) 更新apt包"
+    echo "  6) 安装docker"
+    echo "  7) 退出脚本"
     echo ""
     echo -n "请输入编号: "
     read N
@@ -127,7 +140,9 @@ EOF
     2) samba ;;
     3) ql ;;
     4) backup ;;
-    5) exit ;;
+    5) up_apt ;;
+    6) install_docker ;;
+    7) exit ;;
     *) echo "输入错误！请重新 bash root.sh 启动脚本" ;;
     esac
     else
