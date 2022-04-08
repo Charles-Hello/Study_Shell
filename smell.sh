@@ -129,9 +129,10 @@ EOF
     echo "  2) 安装 samba"
     echo "  3) 安装青龙容器"
     echo "  4) 备份服务器目录"
-    echo "  5) 更新apt包"
+    echo "  5) 更新apt包(first)"
     echo "  6) 安装docker"
     echo "  7) 退出脚本"
+    echo "  8) crontab建议"
     echo ""
     echo -n "请输入编号: "
     read N

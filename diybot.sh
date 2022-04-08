@@ -11,7 +11,7 @@ dir_config=$dir_root/config
 
 #二级目录
 diybot_config_diybotset=$dir_config/user.session
-bot_json=$dir_config/bot.
+bot_json=$dir_config/bot.json
 
 
 
@@ -111,7 +111,7 @@ fi
 
 
 
-bot_yilai(){
+bot_rely(){
 
   #拉取dockerbot
   ##判断一个目录存在，且为空。一开始容器的dockerbot的git为空，所以需要拉取
@@ -120,12 +120,20 @@ bot_yilai(){
     git_clone_scripts ${url} ${repo_path} "main"
   fi
   ##强制复制目录且存在目标覆盖，没有通知
-  cp -rf "$repo_path/jbot" $dir_root
+
+  if [[ ! -f "$dir_bot/diy/user.py" ]]; then
+    cp -rf "$repo_path/jbot" $dir_root
+  else
+    cp "ls $repo_path/jbot |grep -v user.py|xargs" $dir_root
+  fi
 
 
-  if [[ ! -f "$dir_root/config/bot.json" ]]; then
+
+  if [[ ! -f "$dir_bot/config/bot.json" ]]; then
     cp -f "$repo_path/config/bot.json" "$dir_root/config"
   fi
+
+
   #复制环境变量
    cp -f "$repo_path/requirements.txt" "$dir_root/config"
 
@@ -191,11 +199,11 @@ start() {
   clear
   echo "稍等片刻后，输入手机号（带国家代码）和 Telegram 验证码以完成登录"
   echo "登陆完成后使用 Ctrl + C 退出脚本，并使用以下命令启动 user 监控"
-  echo ""
-  echo "如果没有显示登陆手机号则通过下面口令查看log报错！"
-  echo "cat /ql/log/bot/run.log"
-  echo "user.py-->[Errno 9] Bad file descriptor   user没有登陆"
-  echo "user登陆的open出现证明网络问题或者等待几分钟再重试"
+  echo -e "如果没有显示登陆手机号则通过下面口令查看log报错!\n"
+  echo -e "user.py-->[Errno 9] Bad file descriptor   user没有登陆\n"
+  echo -e "user登陆的open出现证明网络问题或者等待几分钟再重试\n"
+  echo -e "如果出现database的话就说明数据库被锁，此时只要等个几分钟，然后删除user.session再登陆\n"
+  echo -e "\ncat /ql/log/bot/run.log"
 
   if [ -d "/jd" ]
     then echo "cd $dir_root;pm2 restart jbot"
@@ -206,6 +214,12 @@ start() {
   cd $dir_root
   python3 -m jbot
 }
+restart(){
+  if [ -d '/jd' ]; then cd /jd/jbot; pm2 start ecosystem.config.js; cd /jd; pm2 restart jbot; else ps -ef | grep 'python3 -m jbot' | grep -v grep | awk '{print $1}' | xargs kill -9 2>/dev/null; nohup python3 -m jbot >/ql/log/bot/bot.log 2>&1 & fi
+  echo -e '重启user成功\n 下方命令查看bot日记\n cat /ql/log/bot/run.log'
+}
+
+
 
 main() {
     cat << EOF
@@ -227,14 +241,16 @@ EOF
     echo "请选择您需要进行的操作:"
     echo "  1) 安装所有的依赖并启动bot"
     echo "  2) 启动diyboy"
-    echo "  3) 退出脚本"
+    echo "  3) 重启user"
+    echo "  4) 退出脚本"
     echo ""
     echo -n "请输入编号: "
     read N
     case $N in
-    1) bot_yilai ;;
+    1) bot_rely ;;
     2) start ;;
-    3) exit ;;
+    3) restart ;;
+    4) exit ;;
     *) echo "输入错误！请重新 bash diybot.sh 启动脚本" ;;
     esac
 }
