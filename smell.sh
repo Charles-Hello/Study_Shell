@@ -1,3 +1,5 @@
+#!/bin/bash
+
 ssh() {
   clear
   echo '开始一键安装ssh'
@@ -24,12 +26,12 @@ samba() {
   FIND_FILE="/etc/samba/smb.conf"
   FIND_STR="writable=yes"
   # 判断匹配函数，匹配函数不为0，则包含给定字符
-  if [ `grep -c "$FIND_STR" $FIND_FILE` -ne '0' ];then
+  if [ $(grep -c "$FIND_STR" $FIND_FILE) -ne '0' ]; then
       echo "已经挂载了共享目录,跳过"
   else
     read -p "请输入你想要共享的文档：" path
     sed -i "\$a\[share]\n  path=/$path\n  public=yes\n  writable=yes\n  available=yes" /etc/samba/smb.conf
-    fi
+  fi
   sudo  touch /etc/samba/smbpasswd
   echo '当前登录linux的用户名一致即root'
   echo '请输入你的密码'
@@ -48,51 +50,48 @@ EOF
 }
 
 ql1() {
-  ccho -e "本shell和diybot只在2.11.3成功运行！\n不推荐小白安装其他版本！"
+  echo -e "本shell和diybot只在2.11.3成功运行！\n不推荐小白安装其他版本！"
   read -p "请输入你想创建ql容器几：" name
   echo -e -p "输入latest或者2.11.3(默认: 2.11.3，回车)"
   read -p "请输入你想ql版本：" version
-  [[ -z "${version}" ]] && version="2.11.3"
-  val=`expr 2 \* $name - 1 `
-  _ip=`expr 5700 + $val `
+  [[ -z ${version}   ]] && version="2.11.3"
+  val=$(expr 2 \* $name - 1)
+  _ip=$(expr 5700 + $val)
   docker run -dit \
-  -v $PWD/ql$name/config:/ql/config \
-  -v $PWD/ql$name/log:/ql/log \
-  -v $PWD/ql$name/db:/ql/db \
-  -v $PWD/ql$name/repo:/ql/repo \
-  -v $PWD/ql$name/raw:/ql/raw \
-  -v $PWD/ql$name/scripts:/ql/scripts \
-  -v $PWD/ql$name/jbot:/ql/jbot\
-  -v $PWD/ql$name/deps:/ql/deps\
-  -p $_ip:5700 \
-  --name qinglong$name \
-  --hostname qinglong \
-  --restart unless-stopped \
-  whyour/qinglong:"$version"
-  if [ $? -eq 0 ];then
-  echo "ql$name 容器搭建成功！"
-echo "**************************************"
-echo "*       搭建容器🐉$name 成功               *"
-echo "*       访问面板: 127.0.0.1:$_ip  *"
-echo "**************************************"
-else
-  echo "命令失败"
-fi
+    -v $PWD/ql$name/config:/ql/config \
+    -v $PWD/ql$name/log:/ql/log \
+    -v $PWD/ql$name/db:/ql/db \
+    -v $PWD/ql$name/repo:/ql/repo \
+    -v $PWD/ql$name/raw:/ql/raw \
+    -v $PWD/ql$name/scripts:/ql/scripts \
+    -v $PWD/ql$name/jbot:/ql/jbot -v $PWD/ql$name/deps:/ql/deps -p $_ip:5700 \
+    --name qinglong$name \
+    --hostname qinglong \
+    --restart unless-stopped \
+    whyour/qinglong:"$version"
+  if [ $? -eq 0 ]; then
+    echo "ql$name 容器搭建成功！"
+    echo "**************************************"
+    echo "*       搭建容器🐉$name 成功               *"
+    echo "*       访问面板: 127.0.0.1:$_ip  *"
+    echo "**************************************"
+  else
+    echo "命令失败"
+  fi
 }
 
-backup(){
+backup() {
   wget https://raw.githubusercontent.com/Charles-Hello/study_shell/master/ql_backup.py && echo "请先修改好backup.py的里面的内容再运行python3 ql_backup.py"
 }
 
-up_apt(){
+up_apt() {
   echo 'apt-get 安装程序运行'
   sudo apt-get update
   sudo apt-get upgrade
   sudo apt-get -f install
 }
 
-
-install_docker(){
+install_docker() {
   curl -sSL https://get.daocloud.io/docker | sh
 }
 
@@ -107,15 +106,14 @@ ql() {
     read N
     case $N in
     1) ql1 ;;
-    2) main;;
+    2) main ;;
     3) exit ;;
     *) echo "输入错误！" ;;
-    esac
+  esac
 }
 
 main() {
-    if [[ $EUID -eq 0 ]]
-then
+    if [[ $EUID -eq 0 ]]; then
     cat << EOF
   ███████╗███╗   ███╗██╗██╗     ███████╗
   ██╔════╝████╗ ████║██║██║     ██╔════╝
@@ -137,18 +135,17 @@ EOF
     echo -n "请输入编号: "
     read N
     case $N in
-    1) ssh ;;
-    2) samba ;;
-    3) ql ;;
-    4) backup ;;
-    5) up_apt ;;
-    6) install_docker ;;
-    7) exit ;;
-    *) echo "输入错误！请重新 bash root.sh 启动脚本" ;;
+      1) ssh ;;
+      2) samba ;;
+      3) ql ;;
+      4) backup ;;
+      5) up_apt ;;
+      6) install_docker ;;
+      7) exit ;;
+      *) echo "输入错误！请重新 bash root.sh 启动脚本" ;;
     esac
-    else
-  echo '请使用root执行'
-fi
+  else
+    echo '请使用root执行'
+  fi
 }
 main
-
