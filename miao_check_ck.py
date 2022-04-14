@@ -17,7 +17,7 @@ import time
 import json
 from miao_config import *
 '''
-cron: 0 0-23/7 * * *
+cron: 20 1-23/5 * * *
 new Env('ck失效机器人推送');
 '''
 

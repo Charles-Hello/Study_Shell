@@ -64,11 +64,13 @@ ql1() {
     -v $PWD/ql$name/repo:/ql/repo \
     -v $PWD/ql$name/raw:/ql/raw \
     -v $PWD/ql$name/scripts:/ql/scripts \
-    -v $PWD/ql$name/jbot:/ql/jbot -v $PWD/ql$name/deps:/ql/deps -p $_ip:5700 \
+    -v $PWD/ql$name/jbot:/ql/jbot \
+    -v $PWD/ql$name/deps:/ql/deps -p $_ip:5700 \
     --name qinglong$name \
     --hostname qinglong \
     --restart unless-stopped \
     whyour/qinglong:"$version"
+    #拉取依赖并安装
   if [ $? -eq 0 ]; then
     echo "ql$name 容器搭建成功！"
     echo "**************************************"
@@ -89,6 +91,7 @@ up_apt() {
   sudo apt-get update
   sudo apt-get upgrade
   sudo apt-get -f install
+  apt-get install -y sudo wget curl psmisc net-tools
 }
 
 install_docker() {

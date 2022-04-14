@@ -1,3 +1,4 @@
+#!/bin/bash
 
 if [ ! -d "/ql" ];then
   dir_root=/jd
@@ -20,7 +21,26 @@ url="https://github.com/Charles-Hello/ql_diybot.git"
 repo_path="${dir_repo}/dockerbot"
 
 
-git_clone_scripts() {
+
+TIME() {
+  [[ -z "$1" ]] && {
+    echo -ne " "
+  } || {
+    case $1 in
+    r) export Color="\e[31;1m" ;;
+    g) export Color="\e[32;1m" ;;
+    b) export Color="\e[34;1m" ;;
+    y) export Color="\e[33;1m" ;;
+    z) export Color="\e[35;1m" ;;
+    l) export Color="\e[36;1m" ;;
+    esac
+    [[ $# -lt 2 ]] && echo -e "\e[36m\e[0m ${1}" || {
+      echo -e "\e[36m\e[0m ${Color}${2}\e[0m"
+    }
+  }
+}
+
+function git_clone_scripts() {
     local url=$1
     local dir=$2
     local branch=$3
@@ -36,7 +56,7 @@ function judge(){
   if [[ $result != "" ]]; then
     echo -e  "没有写$2"
     if [[ "$1" == 12 ]];then
-      read -p "是否需要用代理呢？请输入[y/n]:   " answer_if
+      read -p "是否需要用代理呢？开启代理输入[Y/y],否则输入[N/n]:   " answer_if
       case $answer_if in
       Y | y)
           get_answer=true
@@ -46,7 +66,9 @@ function judge(){
            echo "将帮你填写代理为false";;
       *)
         get_answer=false
+
 	   echo "输入错误！默认为你填写false"
+	   exit 1;;
       esac
     elif [[ "$1" == 24 ]];then
       read -p "开启CMD输入[y], 否则输入[n]:   " answer_if
@@ -89,7 +111,6 @@ function judge(){
   else
     echo -e  "写了$2，跳过！"
   fi
-  if [[ "$answer_if" == y ]] ; then return 1;else echo return 0; fi
 }
 
 if read -p "部署多容器输入[y], 单输入[n]:   " answer_if ;then
@@ -102,8 +123,12 @@ case $answer_if in
             judge 8 api_id
             judge 10 api_hash
             judge 12 proxy
-            if [[ "$?" ]] ; then judge 14 proxy_type;judge 16 proxy_add ;judge 18 proxy_port ; else echo "跳过代理填写"; fi
-            judge 24 StartCMD;;
+            sed -n '12p' $bot_json | grep -q "false"
+            if [[ $? -ne 0 ]] ; then echo -e "检测到代理配置为true";judge 14 proxy_type;judge 16 proxy_add ;judge 18 proxy_port ; else echo -e "检测到代理配置为false\n跳过代理填写"; fi
+            judge 24 StartCMD
+            echo -e "\n"
+            cat $bot_json
+            echo -e "请查看bot.json文件配置！\n如需修改，则请手动修改！\n命令如下\nvi /ql/config/bot.json\n";;
       *) echo
 	   echo "输入错误！退出脚本"
       esac
@@ -111,7 +136,8 @@ fi
 
 
 
-bot_rely(){
+
+function bot_rely(){
 
   #拉取dockerbot
   ##判断一个目录存在，且为空。一开始容器的dockerbot的git为空，所以需要拉取
@@ -121,11 +147,31 @@ bot_rely(){
   fi
   ##强制复制目录且存在目标覆盖，没有通知
 
+#默认部署普通user
   if [[ ! -f "$dir_bot/diy/user.py" ]]; then
     cp -rf "$repo_path/jbot" $dir_root
   else
     cp "ls $repo_path/jbot |grep -v user.py|xargs" $dir_root
   fi
+#这里做判断，如果需要user管理则采用覆盖的方式,启动的话则需要jbot的diy的config删除并有configpro管理文件
+while :; do
+  read -p $'默认采用普通的user\n是否需要使用管理的user呢？使用输入[Y/y],取消则输入[N/n]:   ' answer_if
+  case $answer_if in
+        [Yy])
+          TIME g "已为你部署管理user"
+          cp -rf "$repo_path/manager/*" $dir_bot/diy
+          ;;
+        [Nn])
+          TIME g "已为你部署普通user"
+          break
+          ;;
+        *)
+          echo
+          TIME b "提示：请输入正确的选择!"
+          echo
+          ;;
+        esac
+      done
 
 
 
@@ -133,6 +179,9 @@ bot_rely(){
     cp -f "$repo_path/config/bot.json" "$dir_root/config"
   fi
 
+  if [[ ! -f "$dir_bot/config/diybotset.json" ]]; then
+    cp -f "$repo_path/config/diybotset.json" "$dir_root/config"
+  fi
 
   #复制环境变量
    cp -f "$repo_path/requirements.txt" "$dir_root/config"
@@ -177,7 +226,9 @@ bot_rely(){
   if [ ! -d "/ql/log/bot" ]; then
       mkdir $dir_root/log/bot
   fi
-  if [[ -z $(grep -E "123456789" $dir_root/config/bot.json) ]]; then
+  content=`sed -n "1,12p" $bot_json`
+  result=$(echo $content | grep "123456789")
+  if [[ $result != "" ]]; then
     if [ -d "/ql" ]; then
         ps -ef | grep "python3 -m jbot" | grep -v grep | awk '{print $1}' | xargs kill -9 2>/dev/null
         nohup python3 -m jbot >$dir_root/log/bot/bot.log 2>&1 &
@@ -191,11 +242,12 @@ bot_rely(){
     fi
 else
     echo -e  "似乎 $dir_root/config/bot.json 还未修改为你自己的信息，可能是首次部署容器，因此不启动Telegram Bot...\n配置好bot.json后再次运行本程序即可启动"
+    echo -e "请查看bot.json文件配置！\n如需修改，则请手动修改！\n命令如下\nvi /ql/config/bot.json\n"
 fi
 }
 
 
-start() {
+function start() {
   clear
   echo "稍等片刻后，输入手机号（带国家代码）和 Telegram 验证码以完成登录"
   echo "登陆完成后使用 Ctrl + C 退出脚本，并使用以下命令启动 user 监控"
@@ -214,14 +266,14 @@ start() {
   cd $dir_root
   python3 -m jbot
 }
-restart(){
+function restart(){
   if [ -d '/jd' ]; then cd /jd/jbot; pm2 start ecosystem.config.js; cd /jd; pm2 restart jbot; else ps -ef | grep 'python3 -m jbot' | grep -v grep | awk '{print $1}' | xargs kill -9 2>/dev/null; nohup python3 -m jbot >/ql/log/bot/bot.log 2>&1 & fi
   echo -e '重启user成功\n 下方命令查看bot日记\n cat /ql/log/bot/run.log'
 }
 
 
 
-main() {
+function main() {
     cat << EOF
 """
               ┏┓      ┏┓
@@ -239,7 +291,7 @@ main() {
 """
 EOF
     echo "请选择您需要进行的操作:"
-    echo "  1) 安装所有的依赖并启动bot"
+    echo "  1) 安装依赖并启动bot"
     echo "  2) 启动diyboy"
     echo "  3) 重启user"
     echo "  4) 退出脚本"
