@@ -51,8 +51,10 @@ EOF
 
 ql1() {
   echo -e "本shell和diybot只在2.11.3成功运行！\n不推荐小白安装其他版本！"
+  echo
   read -p "请输入你想创建ql容器几：" name
   echo -e -p "输入latest或者2.11.3(默认: 2.11.3，回车)"
+  echo
   read -p "请输入你想ql版本：" version
   [[ -z ${version}   ]] && version="2.11.3"
   val=$(expr 2 \* $name - 1)

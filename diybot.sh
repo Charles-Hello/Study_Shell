@@ -174,17 +174,20 @@ while :; do
       done
 
 
+    read -p -r "请输入你的diy_bot的名字： " answer_if
+    sed -i "s/smell!/$answer_if/g" $dir_bot/diy/config.py
 
-  if [[ ! -f "$dir_bot/config/bot.json" ]]; then
+
+  if [[ ! -f "$dir_config/bot.json" ]]; then
     cp -f "$repo_path/config/bot.json" "$dir_root/config"
   fi
 
-  if [[ ! -f "$dir_bot/config/diybotset.json" ]]; then
+  if [[ ! -f "$dir_config/diybotset.json" ]]; then
     cp -f "$repo_path/config/diybotset.json" "$dir_root/config"
   fi
 
   #复制环境变量
-   cp -f "$repo_path/requirements.txt" "$dir_root/config"
+   cp -f "$repo_path/requirements.txt" "$dir_bot"
 
   #填写bot.json文件
   judge
@@ -195,20 +198,11 @@ while :; do
   apk --no-cache add -f zlib-dev gcc jpeg-dev python3-dev musl-dev freetype-dev
   echo -e "\nbot依赖安装成功...\n"
 
-  echo -e "\nbot文件下载成功...\n"
   echo -e "安装python3依赖...\n"
   cd $dir_bot
   pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple/
   pip3 --default-timeout=100 install -r requirements.txt --no-cache-dir
   echo -e "\npython3依赖安装成功...\n"
-
-  cd $dir_config
-  echo -e "安装容器里面的python3依赖...\n"
-  pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple/
-  pip3 --default-timeout=100 install -r requirements.txt --no-cache-dir
-  echo -e "\n全部依赖安装成功...\n"
-
-
 
 
 
