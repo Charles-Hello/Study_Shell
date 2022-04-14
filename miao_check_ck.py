@@ -68,7 +68,7 @@ for a in range(len((data['data']))):
         pin = re.findall('pt_pin=(.*);',ck)[0]
         if pin in g :
             wxid = re.findall(f'{pin}\$(.*)',g)[0]
-            send_text_msg('wxid_p8geau233z3412',wxid, '你这个'+pin+'失效或者被锁\n请再次登陆京东或者找群主解pin')
+            send_text_msg('wxid_p8geau233z3412',wxid, '你这个'+pin+'失效或者被锁\n请再次登陆京东\n回复「教学」查看教学\n重新登陆即可')
 
 
 
