@@ -152,8 +152,6 @@ function bot_rely(){
 #默认部署普通user
   if [[ ! -f "$dir_bot/diy/user.py" ]]; then
     cp -rf "$repo_path/jbot" $dir_root
-  else
-    cp "ls $repo_path/jbot |grep -v user.py|xargs" $dir_root
   fi
 #这里做判断，如果需要user管理则采用覆盖的方式,启动的话则需要jbot的diy的config删除并有configpro管理文件
 while :; do
@@ -248,11 +246,11 @@ function start() {
   clear
   echo "稍等片刻后，输入手机号（带国家代码）和 Telegram 验证码以完成登录"
   echo "登陆完成后使用 Ctrl + C 退出脚本，并使用以下命令启动 user 监控"
-  echo -e "如果没有显示登陆手机号则通过下面口令查看log报错!\n"
-  echo -e "user.py-->[Errno 9] Bad file descriptor   user没有登陆\n"
-  echo -e "user登陆的open出现证明网络问题或者等待几分钟再重试\n"
-  echo -e "如果出现database的话就说明数据库被锁，此时只要等个几分钟，然后删除user.session再登陆\n"
-  echo -e "\ncat /ql/log/bot/run.log"
+  echo -e "「问题1」如果没有显示登陆手机号则通过下面口令查看log报错!"
+  echo -e "「问题2」user.py-->[Errno 9] Bad file descriptor   user没有登陆"
+  echo -e "「问题3」user登陆的open出现证明网络问题或者等待几分钟再重试"
+  echo -e "「问题4」如果出现database的话就说明数据库被锁，此时只要等，至于多久看run.log"
+  echo -e "下方命令查看bot日记\ncat /ql/log/bot/run.log"
 
   if [ -d "/jd" ]
     then echo "cd $dir_root;pm2 restart jbot"
@@ -288,8 +286,8 @@ function main() {
 """
 EOF
     echo "请选择您需要进行的操作:"
-    echo "  1) 安装依赖并启动bot"
-    echo "  2) 启动diyboy"
+    echo "  1) 安装依赖并启动bot(一键)"
+    echo "  2) 启动diybot"
     echo "  3) 重启user"
     echo "  4) 退出脚本"
     echo ""
