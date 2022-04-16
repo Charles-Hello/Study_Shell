@@ -103,8 +103,10 @@ function judge(){
     else
     read -p "请输入你的$2：" get_answer
     fi
-    if [[ "$1" == "4" ]] || [[ "$1" == "12" ]] || [[ "$1" == "18" ]] || [[ "$1" == "24" ]]; then
+    if [[ "$1" == "4" ]] || [[ "$1" == "12" ]] || [[ "$1" == "18" ]] ; then
       sed -ri "s/\"$2\":"\(.*\)"/\"$2\":$get_answer,"/ $bot_json
+    elif [[ "$1" == "24" ]]; then
+        sed -ri "s/\"$2\":"\(.*\)"/\"$2\":$get_answer"/ $bot_json
     else
       sed -ri "s/\"$2\":"\(.*\)"/\"$2\":\"$get_answer\","/ $bot_json
     fi
@@ -226,6 +228,7 @@ while :; do
     if [ -d "/ql" ]; then
         ps -ef | grep "python3 -m jbot" | grep -v grep | awk '{print $1}' | xargs kill -9 2>/dev/null
         nohup python3 -m jbot >$dir_root/log/bot/bot.log 2>&1 &
+        nohup python3 -m jbot >/ql/log/bot/bot.log 2>&1 &
         echo -e "bot启动成功...\n"
     else
         cd $dir_bot
