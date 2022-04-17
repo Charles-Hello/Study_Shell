@@ -16,7 +16,7 @@ import time
 import requests
 from miao_config import *
 '''
-cron: 0 0-23/7 * * *
+cron: 0 0-23/1 * * *
 new Env('ql自动登陆');
 '''
 
