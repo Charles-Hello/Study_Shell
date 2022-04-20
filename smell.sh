@@ -135,7 +135,6 @@ EOF
     echo "  5) 更新apt包(first)"
     echo "  6) 安装docker"
     echo "  7) 退出脚本"
-    echo "  8) crontab建议"
     echo ""
     echo -n "请输入编号: "
     read N
