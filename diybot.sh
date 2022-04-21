@@ -174,8 +174,7 @@ while :; do
       done
 
 
-    read -p -r "请输入你的diy_bot的名字： " answer_if
-    sed -i "s/smell!/$answer_if/g" $dir_bot/diy/config.py
+
 
 
   if [[ ! -f "$dir_config/bot.json" ]]; then
@@ -206,14 +205,7 @@ while :; do
 
 
 
-  echo "检测 user 文件 "
-  if [ -f $diybot_config_diybotset ]; then
-    echo "  └—结果：user有残留，正在删除～"
-    rm $dir_config/user.session
-    rm $dir_config/user.session-journal
-  else
-    echo "  └—结果：不存在，安全登录！"
-  fi
+
 
 
   cd $dir_root
@@ -222,7 +214,7 @@ while :; do
   fi
   content=`sed -n "1,12p" $bot_json`
   result=$(echo $content | grep "123456789")
-  if [[ $result != "" ]]; then
+  if [[ $? == 1 ]]; then
     if [ -d "/ql" ]; then
         ps -ef | grep "python3 -m jbot" | grep -v grep | awk '{print $1}' | xargs kill -9 2>/dev/null
         nohup python3 -m jbot >$dir_root/log/bot/bot.log 2>&1 &
@@ -243,6 +235,24 @@ fi
 
 function start() {
   clear
+  content=`sed -n "10p" $bot_json`
+  result=$(echo $content | grep "smell")
+  if [[ $? != 1 ]]; then
+    read -p -r "请输入你的diy_bot的名字： " answer_if
+    sed -i "s/smell!/$answer_if/g" $dir_bot/diy/config.py
+else
+    echo -e  "bot名字已经填写了！"
+fi
+  #写了smell则选择，没写则代表bot名字存在
+
+  echo "检测 user 文件 "
+  if [ -f $diybot_config_diybotset ]; then
+    echo "  └—结果：user有残留，正在删除～"
+    rm $dir_config/user.session
+    rm $dir_config/user.session-journal
+  else
+    echo "  └—结果：不存在，安全登录！"
+  fi
   echo "稍等片刻后，输入手机号（带国家代码）和 Telegram 验证码以完成登录"
   echo "登陆完成后使用 Ctrl + C 退出脚本，并使用以下命令启动 user 监控"
   echo -e "「问题1」如果没有显示登陆手机号则通过下面口令查看log报错!"
@@ -254,7 +264,10 @@ function start() {
   if [ -d "/jd" ]
     then echo "cd $dir_root;pm2 restart jbot"
   else
-    echo "cd $dir_root;nohup python3 -m jbot > /ql/log/bot/bot.log 2>&1 &"
+    TIME g "请用下面命令来后台守护bot"
+    echo
+    TIME b "cd /ql;nohup python3 -m jbot > /ql/log/bot/bot.log 2>&1 &"
+
   fi
   echo ""
   cd $dir_root
