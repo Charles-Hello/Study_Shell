@@ -30,7 +30,7 @@ samba() {
       echo "已经挂载了共享目录,跳过"
   else
     read -p "请输入你想要共享的文档：" path
-    sed -i "\$a\[share]\n  path=/$path\n  public=yes\n  writable=yes\n  available=yes" /etc/samba/smb.conf
+    sed -i "\$a\[share]\n  path=/$path\n  public=yes\n  writable=yes\n  available=yes  \ndeadtime=1000  \nmax connections=0  " /etc/samba/smb.conf
   fi
   sudo  touch /etc/samba/smbpasswd
   echo '当前登录linux的用户名一致即root'
