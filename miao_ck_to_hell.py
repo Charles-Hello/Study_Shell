@@ -36,6 +36,9 @@ get_pin = re.findall('辣鸡账号的pin：(.*)',a)
 total_ck = len(get_pin)
 
 
+with open('/ql/scripts/wxid.txt','r') as f1:
+    g = f1.read()
+
 
 
 def to_hell(before,hell,get_id):
@@ -86,10 +89,13 @@ def get_total():
         for num in range(len(data['data'])):
             if fucknum in data['data'][num]['value']:
                 get_pin_id = data['data'][num]['id']
+                if fucknum in g:
+                    wxid = re.findall(f'{fucknum}\$(.*)', g)[0]
+                    send_text_msg('wxid_p8geau233z3412', wxid,
+                                  '你这个' + fucknum + '火爆！暂时去底部歇歇(为了防止继续黑号)')
                 print('黑号(火爆)的pin：'+fucknum)
                 get_pin_num = num
                 to_hell(get_pin_num,get_len,get_pin_id)
-
 
 get_total()
 

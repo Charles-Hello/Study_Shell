@@ -239,7 +239,7 @@ function start() {
   result=$(echo $content | grep "smell")
   if [[ $? != 1 ]]; then
     read -p -r "请输入你的diy_bot的名字： " answer_if
-    sed -i "s/smell!/$answer_if/g" $dir_bot/diy/config.py
+    sed -i "s/smell/$answer_if/g" $dir_bot/diy/config.py
 else
     echo -e  "bot名字已经填写了！"
 fi
