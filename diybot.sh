@@ -133,7 +133,7 @@ case $answer_if in
             echo -e "请查看bot.json文件配置！\n如需修改，则请手动修改！\n命令如下\nvi /ql/config/bot.json\n";;
       *) echo
 	   echo "输入错误！退出脚本"
-      esac
+    esac
 fi
 
 
@@ -219,12 +219,16 @@ while :; do
         ps -ef | grep "python3 -m jbot" | grep -v grep | awk '{print $1}' | xargs kill -9 2>/dev/null
         nohup python3 -m jbot >$dir_root/log/bot/bot.log 2>&1 &
         echo -e "bot启动成功...\n"
+        TIME r "请对机器人输入「/start」命令测试机器人连接情况"
+
     else
         cd $dir_bot
         pm2 start ecosystem.config.js
         cd $dir_root
         pm2 restart jbot
         echo -e "bot启动成功...\n"
+        TIME r "请对机器人输入「/start」命令测试机器人连接情况"
+        TIME r "如果想玩人形user的话，「bash diybot.sh」执行命令2"
     fi
 else
     echo -e  "似乎 $dir_root/config/bot.json 还未修改为你自己的信息，可能是首次部署容器，因此不启动Telegram Bot...\n配置好bot.json后再次运行本程序即可启动"
@@ -241,17 +245,17 @@ function start() {
     read -p -r "请输入你的diy_bot的名字： " answer_if
     sed -i "s/smell/$answer_if/g" $dir_bot/diy/config.py
 else
-    echo -e  "bot名字已经填写了！"
+    echo -e  "bot名字已经填写了！\n"
 fi
   #写了smell则选择，没写则代表bot名字存在
 
-  echo "检测 user 文件 "
+  echo "检测 user 文件......."
   if [ -f $diybot_config_diybotset ]; then
-    echo "  └—结果：user有残留，正在删除～"
+    echo -e "  └—结果：user有残留，正在删除～\n"
     rm $dir_config/user.session
     rm $dir_config/user.session-journal
   else
-    echo "  └—结果：不存在，安全登录！"
+    echo -e "  └—结果：不存在，安全登录！\n"
   fi
   echo "稍等片刻后，输入手机号（带国家代码）和 Telegram 验证码以完成登录"
   echo "登陆完成后使用 Ctrl + C 退出脚本，并使用以下命令启动 user 监控"
@@ -260,7 +264,6 @@ fi
   echo -e "「问题3」user登陆的open出现证明网络问题或者等待几分钟再重试"
   echo -e "「问题4」如果出现database的话就说明数据库被锁，此时只要等，至于多久看run.log"
   echo -e "下方命令查看bot日记\ncat /ql/log/bot/run.log"
-
   if [ -d "/jd" ]
     then echo "cd $dir_root;pm2 restart jbot"
   else

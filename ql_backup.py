@@ -14,7 +14,6 @@ import os
 requests.packages.urllib3.disable_warnings()
 import time
 from aligo import Aligo
-from miao_config import *
 import logging
 import os
 import sys
@@ -23,9 +22,40 @@ import time
 from threading import Thread
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)
+import ujson
+
+# 填写你的面板账号密码
+username = '1140601003'
+password = 'ken1140601003@@@'
+dormitory = '12361142051@chatroom'
+tnanko = 'wxid_xq2w7jl6cbi811'
+jd_xianbao = '5748551094@chatroom'
+jd_miaomiaomiao = "19244435890@chatroom"
+group_id = '24446492186@chatroom'
+user_id = 'wxid_p8geau233z3412'
+taobao_fuli = '17573440617@chatroom'
+taobao_xianbao = '5739151628@chatroom'
+# 主动调用发送接口
+API_URL = "http://192.168.1.50:8090"
+headers = {
+    'Name': 'iHttp',
+    'Ver': "1.1.6.1",
+    'Udid': '0b4891edc500803721b76cf782200fd3',
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36 Edg/97.0.1072.76',
+}
+def send_msg(robot_wxid, to_wxid, msg):
+    data = dict()
+    data["event"] = "SendTextMsg"
+    data["robot_wxid"] = robot_wxid
+    data["to_wxid"] = to_wxid
+    data["msg"] = msg
+    result = ujson.dumps(data)
+    return requests.post(url=API_URL, data=result, headers=headers)
+
+
 
 #这里填写root里面的你想要保存的ql的路径
-path_list = ['ql','ql2','ql3','ql4','ql10']
+path_list = ['ql','ql2','ql3','ql4','ql10','wx_bot']
 QLBK_MAX_FLIES = 1  # 最大备份保留数量
 QLBK_EXCLUDE_NAMES = ['log', '.git', '.github',
                       'node_modules', 'backups']  # 排除目录名
@@ -202,3 +232,4 @@ if __name__ == '__main__':
             '---------' + str(nowtime) + ' 备份程序开始执行------------')
         logger.info('登录阿里云盘')
         start1(pathpro)
+        time.sleep(300)
