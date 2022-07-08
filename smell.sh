@@ -5,7 +5,7 @@ ssh() {
   echo '开始一键安装ssh'
   sudo apt install openssh-server
   sudo passwd root
-  sudo sed -i "s/PermitRootLogin prohibit-password/PermitRootLogin yes/g" /etc/ssh/sshd_config
+  sudo sed -i "s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g" /etc/ssh/sshd_config
   sudo systemctl restart sshd
   sudo ufw allow ssh #打开防火墙
   sudo iptables -A INPUT -p tcp --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT  #开放22端口
@@ -50,6 +50,7 @@ EOF
 }
 
 ql1() {
+  echo "在/root根目录即可"
   echo -e "本shell和diybot只确保在2.11.3流畅运行！\n不推荐小白安装其他版本！"
   echo
   read -p "请输入你想创建ql容器几：" name
@@ -68,7 +69,6 @@ ql1() {
     -v $PWD/ql$name/scripts:/ql/scripts \
     -v $PWD/ql$name/jbot:/ql/jbot \
     -v $PWD/ql$name/deps:/ql/deps -p $_ip:5700 \
-    --name qinglong$name \
     --hostname qinglong \
     --restart unless-stopped \
     whyour/qinglong:"$version"
