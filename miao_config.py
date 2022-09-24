@@ -33,7 +33,7 @@ user_id = 'wxid_p8geau233z3412'
 taobao_fuli = '17573440617@chatroom'
 taobao_xianbao = '5739151628@chatroom'
 # 主动调用发送接口
-API_URL = "http://192.168.1.50:8090"
+API_URL = "http://192.168.1.51:8090"
 headers = {
     'Name': 'iHttp',
     'Ver': "1.1.6.1",
