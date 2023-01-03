@@ -3,7 +3,7 @@
 if [ ! -d "/ql" ];then
   dir_root=/jd
 else
-  dir_root=/ql
+  dir_root=/ql/data
 fi
 #一级目录
 dir_bot=$dir_root/jbot
