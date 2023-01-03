@@ -130,7 +130,7 @@ case $answer_if in
             judge 24 StartCMD
             echo -e "\n"
             cat $bot_json
-            echo -e "请查看bot.json文件配置！\n如需修改，则请手动修改！\n命令如下\nvi /ql/config/bot.json\n";;
+            echo -e "请查看bot.json文件配置！\n如需修改，则请手动修改！\n命令如下\nvi $dir_root/config/bot.json\n";;
       *) echo
 	   echo "输入错误！退出脚本"
     esac
@@ -209,13 +209,13 @@ while :; do
 
 
   cd $dir_root
-  if [ ! -d "/ql/log/bot" ]; then
+  if [ ! -d "$dir_root/log/bot" ]; then
       mkdir $dir_root/log/bot
   fi
   content=`sed -n "1,12p" $bot_json`
   result=$(echo $content | grep "123456789")
   if [[ $? == 1 ]]; then
-    if [ -d "/ql" ]; then
+    if [ -d "$dir_root" ]; then
         ps -ef | grep "python3 -m jbot" | grep -v grep | awk '{print $1}' | xargs kill -9 2>/dev/null
         nohup python3 -m jbot >$dir_root/log/bot/bot.log 2>&1 &
         echo -e "bot启动成功...\n"
@@ -232,7 +232,7 @@ while :; do
     fi
 else
     echo -e  "似乎 $dir_root/config/bot.json 还未修改为你自己的信息，可能是首次部署容器，因此不启动Telegram Bot...\n配置好bot.json后再次运行本程序即可启动"
-    echo -e "请查看bot.json文件配置！\n如需修改，则请手动修改！\n命令如下\nvi /ql/config/bot.json\n"
+    echo -e "请查看bot.json文件配置！\n如需修改，则请手动修改！\n命令如下\nvi $dir_root/config/bot.json\n"
 fi
 }
 
@@ -263,13 +263,13 @@ fi
   echo -e "「问题2」user.py-->[Errno 9] Bad file descriptor   user没有登陆"
   echo -e "「问题3」user登陆的open出现证明网络问题或者等待几分钟再重试"
   echo -e "「问题4」如果出现database的话就说明数据库被锁，此时只要等，至于多久看run.log"
-  echo -e "下方命令查看bot日记\ncat /ql/log/bot/run.log"
+  echo -e "下方命令查看bot日记\ncat $dir_root/log/bot/run.log"
   if [ -d "/jd" ]
     then echo "cd $dir_root;pm2 restart jbot"
   else
     TIME g "请用下面命令来后台守护bot"
     echo
-    TIME b "cd /ql;nohup python3 -m jbot > /ql/log/bot/bot.log 2>&1 &"
+    TIME b "cd $dir_root;nohup python3 -m jbot > $dir_root/log/bot/bot.log 2>&1 &"
 
   fi
   echo ""
@@ -277,8 +277,8 @@ fi
   python3 -m jbot
 }
 function restart(){
-  if [ -d '/jd' ]; then cd /jd/jbot; pm2 start ecosystem.config.js; cd /jd; pm2 restart jbot; else ps -ef | grep 'python3 -m jbot' | grep -v grep | awk '{print $1}' | xargs kill -9 2>/dev/null; nohup python3 -m jbot >/ql/log/bot/bot.log 2>&1 & fi
-  echo -e '重启user成功\n 下方命令查看bot日记\n cat /ql/log/bot/run.log'
+  if [ -d '/jd' ]; then cd /jd/jbot; pm2 start ecosystem.config.js; cd /jd; pm2 restart jbot; else ps -ef | grep 'python3 -m jbot' | grep -v grep | awk '{print $1}' | xargs kill -9 2>/dev/null; nohup python3 -m jbot >$dir_root/log/bot/bot.log 2>&1 & fi
+  echo -e "重启user成功\n 下方命令查看bot日记\n cat $dir_root/log/bot/run.log"
 }
 
 
