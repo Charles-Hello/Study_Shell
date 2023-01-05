@@ -19,5 +19,5 @@ new Env('重启机器人');
 '''
 
 import subprocess
-ret, val = subprocess.getstatusoutput("cd /ql ; if [ -d '/jd' ]; then cd /jd/jbot; pm2 start ecosystem.config.js; cd /jd; pm2 restart jbot; else ps -ef | grep 'python3 -m jbot' | grep -v grep | awk '{print $1}' | xargs kill -9 2>/dev/null; nohup python3 -m jbot >/ql/log/bot/bot.log 2>&1 & fi ")
+ret, val = subprocess.getstatusoutput("cd /ql/data ; if [ -d '/jd' ]; then cd /jd/jbot; pm2 start ecosystem.config.js; cd /jd; pm2 restart jbot; else ps -ef | grep 'python3 -m jbot' | grep -v grep | awk '{print $1}' | xargs kill -9 2>/dev/null; nohup python3 -m jbot >/ql/data/log/bot/bot.log 2>&1 & fi ")
 print(ret)
