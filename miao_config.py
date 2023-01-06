@@ -13,7 +13,7 @@ import re
 import ujson
 requests.packages.urllib3.disable_warnings()
 #默认走的是你config的auth认证(如有需要，则修改)
-with open(r'/ql/config/auth.json', 'r') as f2:
+with open(r'/ql/data/config/auth.json', 'r') as f2:
     token = f2.read()
 datapro = json.loads(token)
 token = datapro['token']
