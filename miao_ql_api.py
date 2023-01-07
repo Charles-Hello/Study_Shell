@@ -76,7 +76,7 @@ class ql_api():
         params = (
             ('searchValue', ''),
         )
-        response = requests.get(f'http://{self.url}/api/envs', headers=self.header, params=params, verify=False)
+        response = requests.get(f'http://{self.url}/api/envs', headers=self.headers, params=params, verify=False)
         data = json.loads(response.text)
         return data
       
