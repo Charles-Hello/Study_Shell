@@ -21,6 +21,6 @@ cron: 0 0-23/1 * * *
 new Env('ql自动登陆');
 '''
 
-ql_api.login()
+ql_api().login()
 
 

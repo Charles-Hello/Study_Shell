@@ -19,4 +19,4 @@ new Env('ql删除重复任务');
 
 
 
-ql_api.get_task()
+ql_api().get_task()

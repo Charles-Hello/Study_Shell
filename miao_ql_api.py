@@ -3,7 +3,7 @@
 #  青龙内网端口
 from miao_config import *
 class ql_api():
-    def __init__(self, *args, **kwargs):
+    def __init__(self):
 
         self.url = ql_url
         

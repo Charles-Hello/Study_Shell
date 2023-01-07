@@ -19,5 +19,5 @@ new Env('ql删除过期ck');
 
 
 
-ql_api.delete_ck()
+ql_api().delete_ck()
 
