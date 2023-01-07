@@ -15,7 +15,7 @@ requests.packages.urllib3.disable_warnings()
 import time
 import requests
 from miao_config import *
-from ql_api import ql_api
+from miao_ql_api import ql_api
 '''
 cron: 0 0-23/1 * * *
 new Env('ql自动登陆');
