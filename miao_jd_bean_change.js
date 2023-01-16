@@ -235,7 +235,7 @@ async function showMsg() {
         ReturnMessage += `京喜工厂：${$.jxFactoryInfo.replace(/(^\s*)|(\s*$)/g, "")}\n`
     }
 
-  ReturnMessage+=`🧧红包明细🧧`;
+  ReturnMessage+=`[红包]红包明细[红包]`;
 
   let theMessage = ReturnMessage;
 
