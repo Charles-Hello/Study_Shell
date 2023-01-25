@@ -37,7 +37,7 @@ pin_list = ['jd_7ec312d2a20b9', 'jd_53176b51ecb57',
             'jd_4fd4dce4a5135', '122272973-806174',
             'jd_457e111bac9ec','13794951707_p']
     # 常规ql「用于跑tg活动」
-ql_url_list = ['192.168.1.145:5700','192.168.1.145:5703',]
+ql_url_list = ['192.168.1.155:5700','192.168.1.155:5703',]
 client_id = ['gPr_row88j6t', 'sYeg5TlEY-lu']
 client_secret = ['7yMcbSQJRc5r8w2Y-lVJ8C3N', '0nyo3LtBJMNE8z6bJI_wNXmE']
 #需要自动登陆面板的
