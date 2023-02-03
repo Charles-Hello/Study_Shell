@@ -7,7 +7,7 @@
 @Motto：ABC(Always Be Coding)
 """
 '''
-cron: 0 23 * * *
+cron: 40 23 * * *
 new Env('ql删除失效店铺签到');
 '''
 
