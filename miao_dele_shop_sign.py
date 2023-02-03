@@ -18,7 +18,7 @@ import os
 requests.packages.urllib3.disable_warnings()
 '''———————————————————————需要填写的地方——————————————————————————————'''
 #填写签到脚本目录的目录
-target = 'scripts_jd_shop_sign'
+target = 'miao_shop_sign'
 src = '/ql/data/log/'
 config_file = "/ql/data/config/config.sh"
 '''———————————————————————需要填写的地方——————————————————————————————'''
