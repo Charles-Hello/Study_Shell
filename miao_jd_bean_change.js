@@ -1,6 +1,7 @@
 /*
-21 6-23/5 * * * jd_bean_change.js
-*/
+cron "22 6-23/5 * * *" jd_bean_change.js, tag:指定京东日资产变动通知
+ */
+
 
 let fs = require('fs');
 const content = fs.readFileSync('/ql/data/scripts/wxid.txt',{flag:'r',encoding:'utf-8'}).toString()
