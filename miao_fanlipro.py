@@ -210,10 +210,10 @@ cookie_list = Judge_env().main_run()
 
 
 
-def to_hell(hell, get_id):
+def to_hell(hell,fromIndex,get_id):
     
 
-    data = '{"fromIndex":' + f'1' + ',"toIndex":' + f'{hell}' + '}'
+    data = '{"fromIndex":' + f'{fromIndex}' + ',"toIndex":' + f'{hell}' + '}'
 
     response = requests.put(
         f'http://{ql_url}/api/envs/{get_id}/move',
@@ -239,7 +239,7 @@ def ck_to_hell(pin):
             print('不走返利的狗：' + pin)
             #先ban再hell
             # ban(get_pin_id)
-            to_hell(get_len, get_pin_id)
+            to_hell(get_len,num+1,get_pin_id)
 
 
 
@@ -257,7 +257,7 @@ def ck_to_Heaven(pin):
             send_text_msg(user_id,
                      tnanko, '奖励返利置顶：' + pin)
             #位置（可改）
-            to_hell(9, get_pin_id)
+            to_hell(9,num+1,get_pin_id)
 
 
 def get_token(url, client_id, client_secret):
