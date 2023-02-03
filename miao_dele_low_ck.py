@@ -15,7 +15,8 @@ import requests
 cron: 0 0-23/3 * * *
 new Env('ql删除过期ck');
 '''
-#检测ql状态如果为假，则删除
+# cron "30 23 * * *" script-path=miao_dele_low_ck.py,tag=匹配cron用
+# const $ = new Env('ql删除过期ck');
 
 
 
