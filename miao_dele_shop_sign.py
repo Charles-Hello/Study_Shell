@@ -18,7 +18,7 @@ import os
 requests.packages.urllib3.disable_warnings()
 '''———————————————————————需要填写的地方——————————————————————————————'''
 #填写签到脚本目录的目录
-src = '/ql/log/Annyoo2021_scripts_jd_shop_sign/'
+src = '/ql/log/Annyoo2021_scripts_jd_shop_sign_73/'
 
 '''———————————————————————需要填写的地方——————————————————————————————'''
 files = os.listdir(src)
