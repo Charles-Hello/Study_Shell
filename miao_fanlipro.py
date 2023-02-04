@@ -257,7 +257,7 @@ def ck_to_Heaven(pin):
             send_text_msg(user_id,
                      tnanko, '奖励返利置顶：' + pin)
             #位置（可改）
-            to_hell(9,num+1,get_pin_id)
+            to_hell(7,num+1,get_pin_id)
 
 
 def get_token(url, client_id, client_secret):
