@@ -375,7 +375,7 @@ def ck_dd(cookie):
                                  f'{get_ck}\n这个商品:\n{sku_name[e]}\n\n没有走返利\npin已被禁止挂机\n如有错误,请联系管理员解锁\n如果购买东西却没有置顶\n找群主发pin')
                     send_text_msg(user_id,
                              tnanko,
-                             f'{get_ck}\n这个商品:\n没有走返利,被标记')
+                             f'{get_ck}\n这个商品{sku_name[e]}:\n没有走返利,被标记')
                     print(f'{get_ck}\n这个商品:\n{sku_name[e]}\n没有走返利,被标记\n')
                     time.sleep(2)
                     # 这里写置底并且拉黑小黑屋
