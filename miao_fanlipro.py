@@ -239,7 +239,7 @@ def ck_to_hell(pin):
             print('不走返利的狗：' + pin)
             #先ban再hell
             # ban(get_pin_id)
-            to_hell(get_len,num+1,get_pin_id)
+            to_hell(get_len,num,get_pin_id)
 
 
 
