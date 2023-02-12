@@ -247,7 +247,7 @@ async function showMsg() {
   if ($.AccBalance) $.message += `\n${$.AccBalance}`
   if ($.WalletBalance) $.message += `\n${$.WalletBalance}`
 
-  ReturnMessage += `${$.message}\n为了项目可持续性发展📣\n欢迎买东西走走群主返利🌈\n感谢您的支持!谢谢💗\n不走返利,[发怒]禁止挂机[发怒]哼！！`;
+  ReturnMessage += `${$.message}\n为了项目可持续性发展📣\n欢迎买东西走走群主返利🌈\n感谢您的支持!谢谢💗\n不走返利,[发怒]京豆会越来越少[发怒]哼！！`;
   allMessage += ReturnMessage;
   $.msg($.name, '', ReturnMessage, { "open-url": "https://bean.m.jd.com/beanDetail/index.action?resourceValue=bean" });
   let test = ReturnMessage
