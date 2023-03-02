@@ -120,7 +120,7 @@ headers = {
         'Authorization': Authorization,
         'Content-Type': 'application/json-patch+json',
   }
-async def send_text_msg(robot_wxid, to_wxid, msg,
+def send_text_msg(robot_wxid, to_wxid, msg,
                         final_from_wxid=None,
                         from_wxid=None):
     """
