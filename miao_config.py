@@ -12,6 +12,9 @@ import os
 import re
 import ujson
 import time
+import redis
+
+
 requests.packages.urllib3.disable_warnings()
 #默认走的是你config的auth认证(如有需要，则修改)
 with open(r'/ql/data/config/auth.json', 'r') as f2:
@@ -52,22 +55,88 @@ group_id = '24446492186@chatroom'
 user_id = 'wxid_p8geau233z3412'
 taobao_fuli = '17573440617@chatroom'
 taobao_xianbao = '5739151628@chatroom'
-# 主动调用发送接口
-API_URL = "http://192.168.1.51:8090"
+Redis_ip = '192.168.1.155'  ## Redis地址
+Redis_port = '19736'  ## Redis端口，默认为6379
+Redis_pass = ''  ## Redis密码，无则不填
+# # 主动调用发送接口
+# API_URL = "http://192.168.1.51:8090"
 
-def send_text_msg(robot_wxid, to_wxid, msg):
-    headers = {
-      'Name': 'iHttp',
-      'Ver': "1.1.6.1",
-      'Udid': '0b4891edc500803721b76cf782200fd3',
-      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36 Edg/97.0.1072.76',
-}
-    data = dict()
-    data["event"] = "SendTextMsg"
-    data["robot_wxid"] = robot_wxid
-    data["to_wxid"] = to_wxid
-    data["msg"] = msg
-    result = ujson.dumps(data)
-    return requests.post(url=API_URL, data=result, headers=headers)
 
+# 自行定义nolan服务器发送url
+API_URL = "http://192.168.1.155:9191/api"
+
+class My_Redis:
+    def __init__(self, host: str, port: int, password=None):
+        if password is None:
+            self.r = redis.StrictRedis(
+                host=host, port=port, decode_responses=True)
+        else:
+            self.r = redis.StrictRedis(
+                host=host, port=port, password=password, decode_responses=True)
+
+    def Redis_pipe(self, key: str) -> str:
+        try:
+            with self.r.monitor() as m:
+                for command in m.listen():
+                    a = command['command']
+                    b = a.split(" ")
+                    method = b[0].lower()
+                    _key = b[1]
+                    if re.findall(r'get|set', method) != [] and _key == key:
+                        return self.r.get(key)
+        except Exception as e:
+            pass
+
+    def Redis_set(self, key: str, value: str):
+        self.r.set(key, value)
+
+
+    def Redis_get(self, key: str):
+        return self.r.get(key)
+      
+
+i = My_Redis(host=Redis_ip,port=Redis_port,password=Redis_pass)
+guid = i.Redis_get('guid')
+Authorization = i.Redis_get('Authorization')
+
+
+# def send_text_msg(robot_wxid, to_wxid, msg):
+#     headers = {
+#       'Name': 'iHttp',
+#       'Ver': "1.1.6.1",
+#       'Udid': '0b4891edc500803721b76cf782200fd3',
+#       'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36 Edg/97.0.1072.76',
+# }
+#     data = dict()
+#     data["event"] = "SendTextMsg"
+#     data["robot_wxid"] = robot_wxid
+#     data["to_wxid"] = to_wxid
+#     data["msg"] = msg
+#     result = ujson.dumps(data)
+#     return requests.post(url=API_URL, data=result, headers=headers)
+
+headers = {
+        'accept': 'text/plain',
+        'Authorization': Authorization,
+        'Content-Type': 'application/json-patch+json',
+  }
+async def send_text_msg(robot_wxid, to_wxid, msg,
+                        final_from_wxid=None,
+                        from_wxid=None):
+    """
+    发送普通文本消息
+    :param robot_wxid:机器人ID
+    :param to_wxid:消息接收ID 人/群
+    :param msg:文本消息
+    :return:发送消息
+    """
+    if final_from_wxid:
+        if final_from_wxid != robot_wxid:
+            to_wxid = final_from_wxid
+            if from_wxid != '':
+                to_wxid = from_wxid
+        else:
+            to_wxid = to_wxid
+    data = '{\n  "Guid": "' + guid + '",\n  "atWxids": [""],\n  "UserName": "' + to_wxid + '",\n  "Content": "' + msg + '"\n}'
+    requests.post(url=f'{API_URL}/Message/WXSendMsg', data=data.encode("utf-8"), headers=headers)
 
