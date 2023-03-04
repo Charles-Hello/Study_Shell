@@ -289,7 +289,7 @@ async function showMsg() {
         'Ver': '1.1.6.1',
         'Udid': '0b4891edc500803721b76cf782200fd3'
       };
-      const dataString = { "event": "SendTextMsg", "robot_wxid": "wxid_p8geau233z3412", "to_wxid": wxid, "msg": result };
+      const dataString = { "event": "SendTextMsg", "robot_wxid": "wxid_xq2w7jl6cbi811", "to_wxid": wxid, "msg": result };
       const test_data = JSON.stringify(dataString)
       // console.log(test_data)
       const options = {
