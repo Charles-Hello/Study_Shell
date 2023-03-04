@@ -2,9 +2,8 @@
 cron "22 6-23/5 * * *" jd_bean_change.js, tag:指定京东日资产变动通知
  */
 
-var request = require('request');
+
 let fs = require('fs');
-const redis = require('redis')
 const content = fs.readFileSync('/ql/data/scripts/wxid.txt', { flag: 'r', encoding: 'utf-8' }).toString()
 const $ = new Env('京东日资产变动通知');
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -35,20 +34,7 @@ if ($.isNode()) {
 } else {
   cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
-function encodeUtf8(text) {
-  const code = encodeURIComponent(text);
-  const bytes = [];
-  for (var i = 0; i < code.length; i++) {
-    const c = code.charAt(i);
-    if (c === '%') {
-      const hex = code.charAt(i + 1) + code.charAt(i + 2);
-      const hexVal = parseInt(hex, 16);
-      bytes.push(hexVal);
-      i += 2;
-    } else bytes.push(c.charCodeAt(0));
-  }
-  return bytes;
-}
+
 jdSignUrl = $.isNode() ? (process.env.gua_cleancart_SignUrl ? process.env.gua_cleancart_SignUrl : `${jdSignUrl}`) : ($.getdata('gua_cleancart_SignUrl') ? $.getdata('gua_cleancart_SignUrl') : `${jdSignUrl}`);
 Authorization = process.env.gua_cleancart_Authorization ? process.env.gua_cleancart_Authorization : `${Authorization}`
 if (Authorization && Authorization.indexOf("Bearer ") === -1) Authorization = `Bearer ${Authorization}`
@@ -58,7 +44,6 @@ if (Authorization && Authorization.indexOf("Bearer ") === -1) Authorization = `B
     $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
     return;
   }
-
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];
@@ -270,23 +255,23 @@ async function showMsg() {
   const myArray = content.toString().match(myRe)
   const wxidRe = /\$(.*)/gm;
   const wxidArray = content.toString().match(wxidRe)
-  // const emoji = /'🌅|🥉|🥇|🧧|☀|☁|☔|⛄|📣|💗|🌁|🍉|🈲|🌂|🐶|🌄|🌅|🏭|🌇|🌈|❄|⛅|🌉|💎|🌋|🌌|🌏|🌑|🌔|🌓|⚠|⚠️|🌙|⏫|⏬|🔺|🔻|🔼||👏|👌|💗|👐'/gm;
-  // const re_emoji = test.match(emoji)
-  // await new Promise(resolve => setTimeout(resolve, 70000));
-  // function wx_emoji(emo) {
-  //   var val = "";
-  //   for (var i = 0; i < emo.length; i++) {
-  //     if (val == "")
-  //       val = "\\u" + Number(emo.charCodeAt(i)).toString(16);
-  //     else
-  //       val += "\\u" + Number(emo.charCodeAt(i)).toString(16);
-  //   }
-  //   return '[@emoji=' + val + ']';
-  // }
+  const emoji = /'🌅|🥉|🥇|🧧|☀|☁|☔|⛄|📣|💗|🌁|🍉|🈲|🌂|🐶|🌄|🌅|🏭|🌇|🌈|❄|⛅|🌉|💎|🌋|🌌|🌏|🌑|🌔|🌓|⚠|⚠️|🌙|⏫|⏬|🔺|🔻|🔼||👏|👌|💗|👐'/gm;
+  const re_emoji = test.match(emoji)
+  await new Promise(resolve => setTimeout(resolve, 70000));
+  function wx_emoji(emo) {
+    var val = "";
+    for (var i = 0; i < emo.length; i++) {
+      if (val == "")
+        val = "\\u" + Number(emo.charCodeAt(i)).toString(16);
+      else
+        val += "\\u" + Number(emo.charCodeAt(i)).toString(16);
+    }
+    return '[@emoji=' + val + ']';
+  }
 
-  // for (let num = 0; num < re_emoji.length; num++) {
-  //   test = test.replace(re_emoji[num], wx_emoji(re_emoji[num]))
-  // }
+  for (let num = 0; num < re_emoji.length; num++) {
+    test = test.replace(re_emoji[num], wx_emoji(re_emoji[num]))
+  }
   let result = test
   // console.log('test :  '+test)
   for (let a = 0; a < myArray.length; a++) {
@@ -296,41 +281,34 @@ async function showMsg() {
     let wxid = wxidArray[a].replace('$', '')
     if (test.includes(gg)) {
       console.log(wxid)
-      //创建客户端
-      const redisClient = redis.createClient({ url:"redis://192.168.1.155:19736" })
-
-      //连接
-      await redisClient.connect()
-        .then(() => console.info('redis connect success!'))
-        .catch(console.error)
-
-      //get
-      const guid = await redisClient.get('guid')
-      const Authorization = await redisClient.get('Authorization')
-      console.log("guid:", guid)
-      console.log("Authorization:", Authorization)
-      const nolan_headers = {
-        'accept': 'text/plain',
-        'Authorization': Authorization,
-        'Content-Type': 'application/json-patch+json',
-      }
-      redisClient.quit()
-      const API_URL = "http://192.168.1.155:9191/api"
-
-      var dataString = { "Guid": guid, "atWxids": [""], "UserName": wxid, "Content": result }
-      const options = {
-        url: API_URL + '/Message/WXSendMsg',
-        headers: nolan_headers,
-        method: 'POST',
-        body: JSON.stringify(dataString)
+      const API_URL = "http://192.168.1.51:8090/"
+      const headers = {
+        // 'Content-Type':'application/json',
+        'Host': '117.41.184.212:8090',
+        'Name': 'iHttp',
+        'Ver': '1.1.6.1',
+        'Udid': '0b4891edc500803721b76cf782200fd3'
       };
-      function callback(error, response, body) {
-          if (!error && response.statusCode == 200) {
-              console.log(body);
+      const dataString = { "event": "SendTextMsg", "robot_wxid": "wxid_p8geau233z3412", "to_wxid": wxid, "msg": result };
+      const test_data = JSON.stringify(dataString)
+      // console.log(test_data)
+      const options = {
+        url: API_URL,
+        headers: headers,
+        method: 'POST',
+        body: test_data
+      };
+      $.get(options, (err, resp, data) => {
+        try {
+          if (err) {
+            $.logErr(err)
+          } else {
+            console.log('success')
           }
-      }
-
-      request(options, callback);
+        } catch (e) {
+          $.logErr(e)
+        }
+      })
     }
   }
 
