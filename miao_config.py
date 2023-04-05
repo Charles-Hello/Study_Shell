@@ -21,7 +21,7 @@ with open(r'/ql/data/config/auth.json', 'r') as f2:
     token = f2.read()
 datapro = json.loads(token)
 token = datapro['token']
-wxid_file = '/ql/data/config/wxid.txt'
+wxid_file = '/ql/data/scripts/wxid.txt'
 #青龙内网端口
 ql_url = '127.0.0.1:5600'
 ql_headers = {
