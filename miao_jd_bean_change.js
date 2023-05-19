@@ -204,9 +204,9 @@ async function showMsg() {
   if (typeof $.JDtotalcash !== "undefined") {
     ReturnMessage += `极速金币：${$.JDtotalcash}金币(≈${($.JDtotalcash / 10000).toFixed(2)}元)\n`;
   }
-  if (typeof $.JdzzNum !== "undefined") {
-    ReturnMessage += `京东赚赚：${$.JdzzNum}金币(≈${($.JdzzNum / 10000).toFixed(2)}元)\n`;
-  }
+  // if (typeof $.JdzzNum !== "undefined") {
+  //     ReturnMessage += `京东赚赚：${$.JdzzNum}金币(≈${($.JdzzNum / 10000).toFixed(2)}元)\n`;
+  // }
   if ($.JdMsScore != 0) {
     ReturnMessage += `京东秒杀：${$.JdMsScore}秒秒币(≈${($.JdMsScore / 1000).toFixed(2)}元)\n`;
   }
@@ -388,18 +388,31 @@ async function bean() {
 
 function GetJxBeanInfo() {
   return new Promise((resolve) => {
-    $.get(taskJxUrl("querybeanamount"), async (err, resp, data) => {
+    const options = {
+      url: "https://api.jingxi.com/api?functionId=myassets.queryBeanBalance&appid=jx_h5&t=1683638702064&channel=jxapp&cv=1.2.5&clientVersion=1.2.5&client=jxapp&uuid=28014637690804507&cthr=1&loginType=2&body=%7B%22sceneval%22%3A2%2C%22buid%22%3A325%2C%22appCode%22%3A%22msd1188198%22%2C%22time%22%3A1683638702064%2C%22signStr%22%3A%22a5039d6248f173e75c08245e26cb66c9%22%7D",
+      headers: {
+        "Host": "api.jingxi.com",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Cookie": cookie,
+        "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1"),
+        "Accept-Language": "zh-CN,zh-Hans;q=0.9",
+        "Referer": "https://st.jingxi.com/",
+        "Accept-Encoding": "gzip, deflate, br"
+      }
+    }
+    $.get(options, async (err, resp, data) => {
       try {
         if (err) {
           // console.log(JSON.stringify(err));
           console.log(`喜豆查询: API请求失败，请检查网路重试\n`);
         } else {
-          data = JSON.parse(data.match(new RegExp(/jsonpCBK.?\((.*);*/))[1]);
           if (data) {
+            data = JSON.parse(data)
             if (data.errcode == 0) {
-              $.jxbeanCount = data.data.xibean;
+              $.jxbeanCount = data.data.xiBeanNum;
               if (!$.beanCount) {
-                $.beanCount = data.data.jingbean;
+                $.beanCount = data.data.jingBeanNum;
               }
             }
           }
@@ -523,24 +536,24 @@ function TotalBean() {
         if (err) {
           console.log("TotalBean请求失败:", JSON.stringify(err))
         } else {
-          if (data) {
-            data = JSON.parse(data);
-            if (data['retcode'] === "1001") {
+          let res = $.toObj(data, data)
+          if (typeof res == 'object') {
+            if (res['retcode'] === "1001") {
               $.isLogin = false; //cookie过期
               return;
             }
-            if (data['retcode'] === "0" && data.data && data.data.hasOwnProperty("userInfo")) {
-              $.nickName = data.data.userInfo.baseInfo.nickname;
-              $.levelName = data.data.userInfo.baseInfo.levelName;
-              $.isPlusVip = data.data.userInfo.isPlusVip;
+            if (res['retcode'] === "0" && res.data && res.data.hasOwnProperty("userInfo")) {
+              $.nickName = res.data.userInfo.baseInfo.nickname;
+              $.levelName = res.data.userInfo.baseInfo.levelName;
+              $.isPlusVip = res.data.userInfo.isPlusVip;
             }
-            if (data['retcode'] === '0' && data.data && data.data['assetInfo']) {
-              $.beanCount = data.data && data.data['assetInfo']['beanNum'];
+            if (res['retcode'] === '0' && res.data && res.data['assetInfo']) {
+              $.beanCount = res.data && res.data['assetInfo']['beanNum'];
             } else {
               $.errorMsg = `TotalBean: 数据异常`;
             }
           } else {
-            $.log('京东服务器返回空数据,将无法获取等级及VIP信息');
+            $.log('TotalBean 京东服务器返回空数据,将无法获取等级及VIP信息');
           }
         }
       } catch (e) {
@@ -555,6 +568,7 @@ function TotalBean() {
 
 function TotalBean2() {
   return new Promise(async (resolve) => {
+
     const options = {
       url: `https://wq.jd.com/user/info/QueryJDUserInfo?sceneval=2`,
       headers: {
@@ -633,43 +647,59 @@ function getJingBeanBalanceDetail(page) {
     })
   })
 }
-function queryexpirejingdou() {
+
+async function queryexpirejingdou(f = 0) {
+  $.expirejingdou = 0;
+  let functionId = 'jingBeanDetail'
+  let body = { "pageSize": 20, "pageNo": 1 }
+  let sign = await getSign(functionId, body)
+  if (!sign) { console.log(`过期京豆查询: 获取sign失败`); return }
   return new Promise(async resolve => {
-    const options = {
-      "url": `https://wq.jd.com/activep3/singjd/queryexpirejingdou?_=${Date.now()}&g_login_type=1&sceneval=2`,
-      "headers": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Accept-Language": "zh-cn",
-        "Connection": "keep-alive",
-        "Cookie": cookie,
-        "Host": "wq.jd.com",
-        "Referer": "https://wqs.jd.com/promote/201801/bean/mybean.html",
-        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 14_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.1 Mobile/15E148 Safari/604.1"
+    let options = {
+      'url': `https://api.m.jd.com/client.action?functionId=jingBeanDetail&lmt=0&${sign}`,
+      'headers': {
+        'Cookie': cookie,
+        'Host': 'api.m.jd.com',
+        'Connection': 'keep-alive',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'User-Agent': 'JD4iPhone/167814 (iPhone; iOS; Scale/2.00)',
+        'Accept-Language': 'zh-Hans-CN;q=1',
+        'Accept-Encoding': 'gzip, deflate, br',
       }
     }
-    $.expirejingdou = 0;
-    $.get(options, (err, resp, data) => {
+    $.get(options, async (err, resp, data) => {
       try {
         if (err) {
-          // console.log(`${JSON.stringify(err)}`)
-          console.log(`过期京豆查询: API请求失败，请检查网路重试\n`)
+          if (f < 3) {
+            f = f + 1
+            await $.wait(2000)
+            await queryexpirejingdou(f)
+          } else {
+            console.log(`过期京豆查询: 3次API请求失败，请检查网路重试\n`)
+          }
         } else {
-          if (data) {
-            // console.log(data)
-            data = JSON.parse(data.slice(23, -13));
-            // console.log(data)
-            if (data.ret === 0) {
-              data['expirejingdou'].map(item => {
-                console.log(`${timeFormat(item['time'] * 1000)}日过期京豆：${item['expireamount']}\n`);
-              })
-              $.expirejingdou = data['expirejingdou'][0]['expireamount'];
-              // if ($.expirejingdou > 0) {
-              //   $.message += `\n今日将过期：${$.expirejingdou}京豆 🐶`;
-              // }
+          // console.log(data)
+          let res = $.toObj(data, data)
+          if (typeof res == 'object') {
+            if (res.code == 0 && res.others) {
+              let thisTime = $.time("yyyy-MM-dd", Date.now())
+              let expireArr = {}
+              let msg = res.others.jingBeanExpire?.title ? res.others.jingBeanExpire.title + '\n' : (res.others.jingBeanExpiringInfo?.text ? res.others.jingBeanExpiringInfo.text + '\n' : "")
+              console.log(msg)
+              if (res.others.jingBeanExpiringInfo && res.others.jingBeanExpiringInfo.detailList && res.others.jingBeanExpiringInfo.detailList.length) {
+                let detailList = res.others.jingBeanExpiringInfo.detailList.reverse()
+                for (let i of detailList) {
+                  let expireamount = Number(i.amount)
+                  let msg = i.eventMassage.replace(/年/g, "-").replace(/月/g, "-").replace(/日/g, " ").replace(/即将/g, "")
+                  let dataStr = msg.match(/([^\s]+)(?=\s)/) && msg.match(/([^\s]+)(?=\s)/)[1] || ""
+                  if (dataStr) expireArr[dataStr] = expireamount
+                }
+              }
+              if (Object.keys(expireArr).length != 0) for (let i in expireArr) console.log(`${i} 过期京豆：${expireArr[i]}`)
+              if (expireArr.hasOwnProperty(thisTime)) $.expirejingdou = expireArr[thisTime]
             }
           } else {
-            console.log(`京东服务器返回空数据`)
+            console.log(`过期京豆查询 京东服务器返回空数据`)
           }
         }
       } catch (e) {
@@ -681,16 +711,17 @@ function queryexpirejingdou() {
   })
 }
 
+
 function redPacket() {
   return new Promise(async resolve => {
     const options = {
-      "url": `https://m.jingxi.com/user/info/QueryUserRedEnvelopesV2?type=1&orgFlag=JD_PinGou_New&page=1&cashRedType=1&redBalanceFlag=1&channel=1&_=${+new Date()}&sceneval=2&g_login_type=1&g_ty=ls`,
+      "url": `https://api.m.jd.com/client.action?functionId=myhongbao_getUsableHongBaoList&body=%7B%22appId%22%3A%22appHongBao%22%2C%22appToken%22%3A%22apphongbao_token%22%2C%22platformId%22%3A%22appHongBao%22%2C%22platformToken%22%3A%22apphongbao_token%22%2C%22platform%22%3A%221%22%2C%22orgType%22%3A%222%22%2C%22country%22%3A%22cn%22%2C%22childActivityId%22%3A%22-1%22%2C%22childActiveName%22%3A%22-1%22%2C%22childActivityTime%22%3A%22-1%22%2C%22childActivityUrl%22%3A%22-1%22%2C%22openId%22%3A%22-1%22%2C%22activityArea%22%3A%22-1%22%2C%22applicantErp%22%3A%22-1%22%2C%22eid%22%3A%22-1%22%2C%22fp%22%3A%22-1%22%2C%22shshshfp%22%3A%22-1%22%2C%22shshshfpa%22%3A%22-1%22%2C%22shshshfpb%22%3A%22-1%22%2C%22jda%22%3A%22-1%22%2C%22activityType%22%3A%221%22%2C%22isRvc%22%3A%22-1%22%2C%22pageClickKey%22%3A%22-1%22%2C%22extend%22%3A%22-1%22%2C%22organization%22%3A%22JD%22%7D&appid=JDReactMyRedEnvelope&client=apple&clientVersion=7.0.0`,
       "headers": {
-        'Host': 'm.jingxi.com',
+        'Host': 'api.m.jd.com',
         'Accept': '*/*',
         'Connection': 'keep-alive',
         'Accept-Language': 'zh-cn',
-        'Referer': 'https://st.jingxi.com/my/redpacket.shtml?newPg=App&jxsid=16156262265849285961',
+        'Referer': 'https://h5.m.jd.com/',
         'Accept-Encoding': 'gzip, deflate, br',
         "Cookie": cookie,
         'User-Agent': $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1")
@@ -703,22 +734,22 @@ function redPacket() {
           console.log(`红包查询: API请求失败，请检查网路重试\n`)
         } else {
           if (data) {
-            data = JSON.parse(data).data
+            // console.log(data)
+            data = JSON.parse(data)
             $.jxRed = 0, $.jsRed = 0, $.jdRed = 0, $.jdhRed = 0, $.jxRedExpire = 0, $.jsRedExpire = 0, $.jdRedExpire = 0, $.jdhRedExpire = 0;
-            let t = new Date()
-            t.setDate(t.getDate() + 1)
-            t.setHours(0, 0, 0, 0)
-            t = parseInt((t - 1) / 1000)
-            for (let vo of data.useRedInfo.redList || []) {
-              if (vo.orgLimitStr && vo.orgLimitStr.includes("京喜")) {
-                $.jxRed += parseFloat(vo.balance)
-                if (vo['endTime'] === t) {
-                  $.jxRedExpire += parseFloat(vo.balance)
-                }
-              } else if (vo.orgLimitStr.includes("极速") || vo.orgLimitStr.includes("京东特价")) {
+            let thisTime = $.time("yyyy/MM/dd", Date.now())
+            thisTime = `${thisTime} 23:59:59`
+            let t = new Date(thisTime).getTime()
+            for (let vo of data.hongBaoList || []) {
+              if (vo.orgLimitStr && /(极速|京东特价|京喜特价)/g.test(vo.orgLimitStr)) {
                 $.jsRed += parseFloat(vo.balance)
                 if (vo['endTime'] === t) {
                   $.jsRedExpire += parseFloat(vo.balance)
+                }
+              } else if (vo.orgLimitStr && vo.orgLimitStr.includes("京喜")) {
+                $.jxRed += parseFloat(vo.balance)
+                if (vo['endTime'] === t) {
+                  $.jxRedExpire += parseFloat(vo.balance)
                 }
               } else if (vo.orgLimitStr && vo.orgLimitStr.includes("京东健康")) {
                 $.jdhRed += parseFloat(vo.balance)
@@ -732,13 +763,14 @@ function redPacket() {
                 }
               }
             }
+            // $.balance = data.balance
+            $.balance = ($.jxRed + $.jsRed + $.jdRed + $.jdhRed).toFixed(2)
             $.jxRed = $.jxRed.toFixed(2)
             $.jsRed = $.jsRed.toFixed(2)
             $.jdRed = $.jdRed.toFixed(2)
             $.jdhRed = $.jdhRed.toFixed(2)
-            $.balance = data.balance
             $.expiredBalance = ($.jxRedExpire + $.jsRedExpire + $.jdRedExpire).toFixed(2)
-            $.message += `\n总计红包：${$.balance}(总过期${$.expiredBalance})元\n京东红包：${$.jdRed}(将过期${$.jdRedExpire.toFixed(2)})元\n京喜红包：${$.jxRed}(将过期${$.jxRedExpire.toFixed(2)})元\n极速红包：${$.jsRed}(将过期${$.jsRedExpire.toFixed(2)})元`;
+            $.message += `\n总计红包：${$.balance}(总过期${$.expiredBalance})元\n京东红包：${$.jdRed}(将过期${$.jdRedExpire.toFixed(2)})元\n京喜红包：${$.jxRed}(将过期${$.jxRedExpire.toFixed(2)})元\n特价红包：${$.jsRed}(将过期${$.jsRedExpire.toFixed(2)})元`;
           } else {
             console.log(`京东服务器返回空数据`)
           }
@@ -1256,50 +1288,27 @@ function apptaskUrl(functionId = "", body = "") {
 }
 
 
-
-
-var __Oxb24bc = ["lite-android&", "stringify", "&android&3.1.0&", "&", "&846c4c32dae910ef", "12aea658f76e453faf803d15c40a72e0", "isNode", "crypto-js", "", "api?functionId=", "&body=", "&appid=lite-android&client=android&uuid=846c4c32dae910ef&clientVersion=3.1.0&t=", "&sign=", "api.m.jd.com", "*/*", "RN", "JDMobileLite/3.1.0 (iPad; iOS 14.4; Scale/2.00)", "zh-Hans-CN;q=1, ja-CN;q=0.9", "undefined", "log", "", "", "", "", "jsjia", "mi.com"];
-
-function taskcashUrl(_0x7683x2, _0x7683x3 = {}) {
-  let _0x7683x4 = +new Date();
-  let _0x7683x5 = `${__Oxb24bc[0x0]}${JSON[__Oxb24bc[0x1]](_0x7683x3)}${__Oxb24bc[0x2]}${_0x7683x2}${__Oxb24bc[0x3]}${_0x7683x4}${__Oxb24bc[0x4]}`;
-  let _0x7683x6 = __Oxb24bc[0x5];
-  const _0x7683x7 = $[__Oxb24bc[0x6]]() ? require(__Oxb24bc[0x7]) : CryptoJS;
-  let _0x7683x8 = _0x7683x7.HmacSHA256(_0x7683x5, _0x7683x6).toString();
+function taskcashUrl(functionId, body = {}) {
+  let struuid = randomString(16);
+  let nowTime = Date.now();
+  let test = `${"lite-android&"}${JSON["stringify"](body)}${"&android&3.1.0&"}${functionId}&${nowTime}&${struuid}`;
+  let secret = "12aea658f76e453faf803d15c40a72e0";
+  let cryptoJs = $["isNode"]() ? require("crypto-js") : CryptoJS;
+  let sign = cryptoJs.HmacSHA256(test, secret).toString();
+  let strurl = JD_API_HOST + "api?functionId=" + functionId + "&body=" + `${escape(JSON["stringify"](body))}&appid=lite-android&client=android&uuid=` + struuid + `&clientVersion=3.1.0&t=${nowTime}&sign=${sign}`;
   return {
-    url: `${__Oxb24bc[0x8]}${JD_API_HOST}${__Oxb24bc[0x9]}${_0x7683x2}${__Oxb24bc[0xa]}${escape(JSON[__Oxb24bc[0x1]](_0x7683x3))}${__Oxb24bc[0xb]}${_0x7683x4}${__Oxb24bc[0xc]}${_0x7683x8}${__Oxb24bc[0x8]}`,
+    url: strurl,
     headers: {
-      'Host': __Oxb24bc[0xd],
-      'accept': __Oxb24bc[0xe],
-      'kernelplatform': __Oxb24bc[0xf],
-      'user-agent': __Oxb24bc[0x10],
-      'accept-language': __Oxb24bc[0x11],
+      'Host': "api.m.jd.com",
+      'accept': "*/*",
+      'kernelplatform': "RN",
+      'user-agent': "JDMobileLite/3.1.0 (iPad; iOS 14.4; Scale/2.00)",
+      'accept-language': "zh-Hans-CN;q=1, ja-CN;q=0.9",
       'Cookie': cookie
-    }
+    },
+    timeout: 10000
   }
-} (function (_0x7683x9, _0x7683xa, _0x7683xb, _0x7683xc, _0x7683xd, _0x7683xe) {
-  _0x7683xe = __Oxb24bc[0x12];
-  _0x7683xc = function (_0x7683xf) {
-    if (typeof alert !== _0x7683xe) {
-      alert(_0x7683xf)
-    };
-    if (typeof console !== _0x7683xe) {
-      console[__Oxb24bc[0x13]](_0x7683xf)
-    }
-  };
-  _0x7683xb = function (_0x7683x7, _0x7683x9) {
-    return _0x7683x7 + _0x7683x9
-  };
-  _0x7683xd = _0x7683xb(__Oxb24bc[0x14], _0x7683xb(_0x7683xb(__Oxb24bc[0x15], __Oxb24bc[0x16]), __Oxb24bc[0x17]));
-  try {
-    _0x7683x9 = __encode;
-    if (!(typeof _0x7683x9 !== _0x7683xe && _0x7683x9 === _0x7683xb(__Oxb24bc[0x18], __Oxb24bc[0x19]))) {
-      _0x7683xc(_0x7683xd)
-    }
-  } catch (e) {
-    _0x7683xc(_0x7683xd)
-  }
-})({})
+}
 
 async function JxmcGetRequest() {
   let url = ``;
