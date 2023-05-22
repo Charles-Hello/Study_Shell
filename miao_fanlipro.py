@@ -397,7 +397,7 @@ def main():
             print(f'{cookie}')
             ck_dd(cookie)
             #防止黑ip（改）
-            time.sleep(3)
+            time.sleep(10)
         except Exception as e:
             print(e)
 
