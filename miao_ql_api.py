@@ -68,6 +68,15 @@ class ql_api():
                 ck = data['data'][a]['value']
                 print(ck)
                 pin = re.findall('pt_pin=(.*);',ck)[0]
+                import urllib.parse
+                def is_Chinese(word):
+                    for ch in word:
+                        if '\u4e00' <= ch <= '\u9fff':
+                            return True
+                    return False
+
+                if not is_Chinese(pin):
+                    pin = urllib.parse.unquote(pin)
                 if pin in g :
                     wxid = re.findall(f'{pin}\$(.*)',g)[0]
                     send_text_msg(f'{user_id}',wxid, '你这个'+pin+'失效\n请再次登陆京东\n回复「教学」查看上车教学\n重新登陆即可\n输入「查询」查看总上车情况')
