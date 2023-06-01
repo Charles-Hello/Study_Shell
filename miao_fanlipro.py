@@ -23,14 +23,26 @@ requests.packages.urllib3.disable_warnings()
 sys.path.append('../../tmp')
 #ip（改）
 
+dnow = datetime.now().strftime('%Y-%m-%d')
+dnow_reg = re.compile(dnow)
+
 
 async def getRequest(method, url, data=None, headers=None, params=None, json=None, allow_redirects=False, timeout=30):
-    try:
-        async with httpx.AsyncClient(verify=False, follow_redirects=allow_redirects) as client:
-            res = await client.request(method, url=url, data=data, headers=headers, params=params, json=json, timeout=timeout)
-    except:
-        res = False
-    return res
+    max_retries = 4
+    retry_wait_time = 10
+    
+    for retry in range(max_retries):
+        try:
+            async with httpx.AsyncClient(verify=False, follow_redirects=allow_redirects) as client:
+                res = await client.request(method, url=url, data=data, headers=headers, params=params, json=json, timeout=timeout)
+            return res
+        except Exception as e:
+            print(f"An error occurred: {str(e)}")
+            if retry < max_retries - 1:
+                print(f"Retrying in {retry_wait_time} seconds...")
+                await asyncio.sleep(retry_wait_time)
+    
+    return False
 
 
 
@@ -65,8 +77,7 @@ async def get_fl(cookie):
                 break
             else:
                 continue
-        dnow = datetime.now().strftime('%Y-%m-%d')
-        dnow_reg = re.compile(dnow)
+        
         if type(data) == dict and 'code' in data and data['code'] == 200:
             jforders = data['result']
             allday = True
@@ -135,8 +146,6 @@ async def get_todayorder(cookie):
             print(f'pin: {cookie}\t没有查到订单!')
             return ordlist
         allorder = {k: v for k, v in data.items() if k == 'orderList'}
-        dnow = datetime.now().strftime('%Y-%m-%d')
-        dnow_reg = re.compile(dnow)
         sku_list, sku_name, orderStatus, dataSubmit, price, wareId, wname = [], [], [], [], [], [], []
         if allorder:
             for order in allorder['orderList']:
@@ -328,7 +337,8 @@ async def get_yj(sj_id):
     headers={
         "User-Agent": await userAgent(),
     }
-    fl = requests.get(url=api, params=params,headers=headers).json()
+    fl = await getRequest('GET',url=api,params=params,headers=headers)
+    fl = fl.json()
     print(fl)
     yj = fl['official']
     yj = yj.replace('➖➖➖➖➖','')
@@ -404,4 +414,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
