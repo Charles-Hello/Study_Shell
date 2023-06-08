@@ -347,14 +347,29 @@ async def get_yj(sj_id):
         return False
     else:
         return True
+      
+      
+def is_chinese(word: str) -> bool:
+    """
+    说明:
+        判断字符串是否为中文编码,如果是中文编码则为true，用unquote解码,纯正中文则为false，用quote编码
+    参数:
+        :param word: 文本
+    """
+    for ch in word:
+        if not "\u4e00" <= ch <= "\u9fff":
+            return True
+    return False
 
-
+import urllib.parse
 
 def ck_dd(cookie):
     get_ck = re.findall('pt_pin=(.*);', cookie)[0]
     sku_list, sku_name, yj_id=  asyncio.run(get_todayorder(cookie))
     print(f"这个{get_ck}的sku： {sku_list}")
     print(jin_list)
+    if is_chinese(get_ck):
+        get_ck = urllib.parse.unquote(get_ck)
     try:
         for e, gg in enumerate(sku_list):
             if asyncio.run(get_yj(yj_id[e])):
