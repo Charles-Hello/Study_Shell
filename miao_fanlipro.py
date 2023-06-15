@@ -117,27 +117,48 @@ async def userAgent():
 
 async def get_todayorder(cookie):
     try:
-        # print(cookie)
-        # jdpin = re.findall('pt_pin=(.*)', cookie)[0]
-        url = "https://api.m.jd.com/client.action?functionId=newUserAllOrderList&clientVersion=10.3.4&build=92466&client=android&partner=huaweiharmony&oaid=00000000-0000-0000-0000-000000000000&eid=eidAbcd38121ddscwtBOEHdIRX+8fa3hUootUcLQT475D0fH2wmEo8TVqVfsUJ56R3hwHEE16CVy/Q3V5tENhygqLIhKwCVRMllF8ygoN3vlMOxe2t9u&sdkVersion=29&lang=zh_CN&harmonyOs=1&networkType=wifi&uts=0f31TVRjBSsdMc2dBO7HUOWTXcUTutp2CJQOsGBrepqT%2FqhBlsPOGyHOmhkmC5ljCq0Wk6lYsgxxcIOWe5Rv46R5Lqj%2B%2F3po10nHIecDv%2FXCrFvo3schW6vICefuZNanHXgdwOhWUeAl55DRxFYK6Tm0w3dD6p%2F4IlnkUmC5nWq9SvmJMZgO5fZmv9%2FQHDkEXfDsri%2FA8dYTF5XUP1NH3Q%3D%3D&uemps=0-0&ext=%7B%22prstate%22%3A%220%22%2C%22pvcStu%22%3A%221%22%7D&ef=1&ep=%7B%22hdid%22%3A%22JM9F1ywUPwflvMIpYPok0tt5k9kW4ArJEU3lfLhxBqw%3D%22%2C%22ts%22%3A1643016843309%2C%22ridx%22%3A-1%2C%22cipher%22%3A%7B%22d_model%22%3A%22WUPCBUPCCJK%3D%22%2C%22wifiBssid%22%3A%22dW5hbw93bq%3D%3D%22%2C%22osVersion%22%3A%22CJK%3D%22%2C%22d_brand%22%3A%22IPVLV0VT%22%2C%22screen%22%3A%22CtSzCsenCNqm%22%2C%22uuid%22%3A%22CwC2ZwTuEQO2YJS0EJLwYq%3D%3D%22%2C%22aid%22%3A%22CwC2ZwTuEQO2YJS0EJLwYq%3D%3D%22%2C%22openudid%22%3A%22CwC2ZwTuEQO2YJS0EJLwYq%3D%3D%22%7D%2C%22ciphertype%22%3A5%2C%22version%22%3A%221.2.0%22%2C%22appname%22%3A%22com.jingdong.app.mall%22%7D&st=1643016856640&sign=d1ce5caa63ae6fb3eef3b71aea21003b&sv=100"
+        url = "https://api.m.jd.com/client.action"
         # 最近订单记录链接
-        data = "body=%7B%22deis%22%3A%22dy%22%2C%22phcre%22%3A%22v%22%2C%22newMyOrder%22%3A%221%22%2C%22newUiSwitch%22%3A%221%22%2C%22page%22%3A%221%22%2C%22pagesize%22%3A%2210%22%2C%22plugin_version%22%3A103004%7D&"
+        
+        params = {
+            'functionId': 'newUserAllOrderList',
+            'lmt': '0',
+            'clientVersion': '11.2.2',
+            'build': '98247',
+            'client': 'android',
+            'partner': 'huawei',
+            'oaid': 'b50f99bb238ee85b',
+            'sdkVersion': '33',
+            'lang': 'zh_CN',
+            'harmonyOs': '0',
+            'networkType': 'wifi',
+            'uemps': '0-0',
+            'ext': '{"prstate":"0","pvcStu":"1"}',
+            'avifSupport': '1',
+            'ef': '1',
+            'ep': '{"hdid":"JM9F1ywUPwflvMIpYPok0tt5k9kW4ArJEU3lfLhxBqw=","ts":1686792970907,"ridx":-1,"cipher":{"area":"CJvpCJYmD18zCJU1XzYyCJOz","d_model":"CtSmDNOyCJPLGm==","wifiBssid":"dW5hbw93bq==","osVersion":"CJC=","d_brand":"WQvrb21f","screen":"CtS4CMenCNqm","uuid":"CzTvDtTsENS3CwVtYzK5Cm==","aid":"CzTvDtTsENS3CwVtYzK5Cm==","openudid":"CzTvDtTsENS3CwVtYzK5Cm=="},"ciphertype":5,"version":"1.2.0","appname":"com.jingdong.app.mall"}',
+            'st': '1686792982169',
+            'sign': '014316bee0f99055d2c92e23c47bef36',
+            'sv': '110',
+        }
+
+        data = 'lmt=0&body=%7B%22deis%22%3A%22dy%22%2C%22phcre%22%3A%22v%22%2C%22newMyOrder%22%3A%221%22%2C%22newUiSwitch%22%3A%221%22%2C%22page%22%3A%221%22%2C%22pagesize%22%3A%2210%22%2C%22plugin_version%22%3A110202%7D&'
         # 最近订单body
         headers = {
-            "Charset": "UTF-8",
-            "Accept-Encoding": "gzip,deflate",
-            "Cache-Control": "no-cache",
-            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-            "Content-Length": "199",
-            'Cookie': cookie,
-            "user-agent": await userAgent(),
-        }
+    'Host': 'api.m.jd.com',
+    'cookie':cookie+';whwswswws=JD012145b9omPMYRYRU4168679297216102D3su5xTF750KuL13dsduJMkv3qHEyvaQ4ebPfoYE62EuCiqRsQNkhGlimL2wFikhygrEYWi3faddAlWYt3d2UA1amdq2r~j-jUBWPjircx0SBeBSm-wGU6p3tfuX2LcpNeA-MQwfN7l-kdJfOrzKXXmfAp0Cqx_UTGh2t2sejriN4VpaCezYGxlVxFELKsZomDPaxac8J8S3EQA2Co72ejWZXvekvpJ2jUxulMzdhdfN54y1GDJ6g;unionwsws={devicefinger:eidA252f81237as1f22tG5sNTBuujJUNhgbxe39trqRDoKYZzSkL5xbI1zlVqmpHqVWDCDBOyFAX+2woudpaehIzoCzETO0YFqwMeW7psqX+GiUUAel3,jmafinger:JD012145b9omPMYRYRU4168679297216102D3su5xTF750KuL13dsduJMkv3qHEyvaQ4ebPfoYE62EuCiqRsQNkhGlimL2wFikhygrEYWi3faddAlWYt3d2UA1amdq2r~j-jUBWPjircx0SBeBSm-wGU6p3tfuX2LcpNeA-MQwfN7l-kdJfOrzKXXmfAp0Cqx_UTGh2t2sejriN4VpaCezYGxlVxFELKsZomDPaxac8J8S3EQA2Co72ejWZXvekvpJ2jUxulMzdhdfN54y1GDJ6g};',
+    'charset': 'UTF-8',
+    'user-agent': await userAgent(),
+    'cache-control': 'no-cache',
+    'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+}
         # 最近订单记录
         for _ in range(3):
-            res = await getRequest('POST', url=url, data=data, headers=headers)
+            res = await getRequest('POST', url=url, data=data, headers=headers,params=params)
+#             print(res)
             if res and res.status_code == 200:
                 data = res.json()
-                # print(data)
+#                 print(data)
                 break
             else:
                 continue
