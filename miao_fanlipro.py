@@ -16,7 +16,7 @@ import os
 import asyncio
 from datetime import datetime,timedelta
 import httpx
-
+import aiohttp
 
 from miao_config import *
 requests.packages.urllib3.disable_warnings()
@@ -117,48 +117,49 @@ async def userAgent():
 
 async def get_todayorder(cookie):
     try:
-        url = "https://api.m.jd.com/client.action"
-        # 最近订单记录链接
-        
         params = {
-            'functionId': 'newUserAllOrderList',
-            'lmt': '0',
-            'clientVersion': '11.2.2',
-            'build': '98247',
-            'client': 'android',
-            'partner': 'huawei',
-            'oaid': 'b50f99bb238ee85b',
-            'sdkVersion': '33',
-            'lang': 'zh_CN',
-            'harmonyOs': '0',
-            'networkType': 'wifi',
-            'uemps': '0-0',
-            'ext': '{"prstate":"0","pvcStu":"1"}',
-            'avifSupport': '1',
-            'ef': '1',
-            'ep': '{"hdid":"JM9F1ywUPwflvMIpYPok0tt5k9kW4ArJEU3lfLhxBqw=","ts":1686792970907,"ridx":-1,"cipher":{"area":"CJvpCJYmD18zCJU1XzYyCJOz","d_model":"CtSmDNOyCJPLGm==","wifiBssid":"dW5hbw93bq==","osVersion":"CJC=","d_brand":"WQvrb21f","screen":"CtS4CMenCNqm","uuid":"CzTvDtTsENS3CwVtYzK5Cm==","aid":"CzTvDtTsENS3CwVtYzK5Cm==","openudid":"CzTvDtTsENS3CwVtYzK5Cm=="},"ciphertype":5,"version":"1.2.0","appname":"com.jingdong.app.mall"}',
-            'st': '1686792982169',
-            'sign': '014316bee0f99055d2c92e23c47bef36',
-            'sv': '110',
-        }
-
-        data = 'lmt=0&body=%7B%22deis%22%3A%22dy%22%2C%22phcre%22%3A%22v%22%2C%22newMyOrder%22%3A%221%22%2C%22newUiSwitch%22%3A%221%22%2C%22page%22%3A%221%22%2C%22pagesize%22%3A%2210%22%2C%22plugin_version%22%3A110202%7D&'
+    'functionId': 'newUserAllOrderList',
+    'clientVersion': '11.2.2',
+    'build': '98247',
+    'client': 'android',
+    'partner': 'huawei',
+    'oaid': 'b50f99bb238ee85b',
+    'lang': 'zh_CN',
+    'harmonyOs': '0',
+    'networkType': 'wifi',
+    'uemps': '0-0',
+    'ext': '{"prstate":"0","pvcStu":"1"}',
+    'avifSupport': '1',
+    'ef': '1',
+    'ep': '{"hdid":"JM9F1ywUPwflvMIpYPok0tt5k9kW4ArJEU3lfLhxBqw=","ts":1686792970907,"ridx":-1,"cipher":{"area":"CJvpCJYmD18zCJU1XzYyCJOz","d_model":"CtSmDNOyCJPLGm==","wifiBssid":"dW5hbw93bq==","osVersion":"CJC=","d_brand":"WQvrb21f","screen":"CtS4CMenCNqm","uuid":"CzTvDtTsENS3CwVtYzK5Cm==","aid":"CzTvDtTsENS3CwVtYzK5Cm==","openudid":"CzTvDtTsENS3CwVtYzK5Cm=="},"ciphertype":5,"version":"1.2.0","appname":"com.jingdong.app.mall"}',
+    'st': '1686792982169',
+    'sign': '014316bee0f99055d2c92e23c47bef36',
+    'sv': '110',
+}
+        # 最近订单记录链接
+        data = {
+    'lmt': '0',
+    'body': '{"deis":"dy","phcre":"v","newMyOrder":"1","newUiSwitch":"1","page":"1","pagesize":"10","plugin_version":110202}',
+}
         # 最近订单body
         headers = {
     'Host': 'api.m.jd.com',
-    'cookie':cookie+';whwswswws=JD012145b9omPMYRYRU4168679297216102D3su5xTF750KuL13dsduJMkv3qHEyvaQ4ebPfoYE62EuCiqRsQNkhGlimL2wFikhygrEYWi3faddAlWYt3d2UA1amdq2r~j-jUBWPjircx0SBeBSm-wGU6p3tfuX2LcpNeA-MQwfN7l-kdJfOrzKXXmfAp0Cqx_UTGh2t2sejriN4VpaCezYGxlVxFELKsZomDPaxac8J8S3EQA2Co72ejWZXvekvpJ2jUxulMzdhdfN54y1GDJ6g;unionwsws={devicefinger:eidA252f81237as1f22tG5sNTBuujJUNhgbxe39trqRDoKYZzSkL5xbI1zlVqmpHqVWDCDBOyFAX+2woudpaehIzoCzETO0YFqwMeW7psqX+GiUUAel3,jmafinger:JD012145b9omPMYRYRU4168679297216102D3su5xTF750KuL13dsduJMkv3qHEyvaQ4ebPfoYE62EuCiqRsQNkhGlimL2wFikhygrEYWi3faddAlWYt3d2UA1amdq2r~j-jUBWPjircx0SBeBSm-wGU6p3tfuX2LcpNeA-MQwfN7l-kdJfOrzKXXmfAp0Cqx_UTGh2t2sejriN4VpaCezYGxlVxFELKsZomDPaxac8J8S3EQA2Co72ejWZXvekvpJ2jUxulMzdhdfN54y1GDJ6g};',
-    'charset': 'UTF-8',
-    'user-agent': await userAgent(),
-    'cache-control': 'no-cache',
-    'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    'Cookie': cookie,
+    'Charset': 'UTF-8',
+    'User-Agent': 'jdapp;iPhone;10.0.2;14.1;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 14_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1',
+    'Cache-Control': 'no-cache',
+    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
 }
         # 最近订单记录
         for _ in range(3):
-            res = await getRequest('POST', url=url, data=data, headers=headers,params=params)
-#             print(res)
-            if res and res.status_code == 200:
-                data = res.json()
-#                 print(data)
+            async def send_request():
+                async with aiohttp.ClientSession() as session:
+                    async with session.post('https://api.m.jd.com/client.action', params=params, headers=headers, data=data) as response:
+                          return await response.json()
+            res = await send_request()
+            if res['code'] != "3":
+                data = res
+                print(res)
                 break
             else:
                 continue
@@ -167,9 +168,12 @@ async def get_todayorder(cookie):
             print(f'pin: {cookie}\t没有查到订单!')
             return ordlist
         allorder = {k: v for k, v in data.items() if k == 'orderList'}
+        dnow = datetime.now().strftime('%Y-%m-%d')
+        dnow_reg = re.compile(dnow)
         sku_list, sku_name, orderStatus, dataSubmit, price, wareId, wname = [], [], [], [], [], [], []
         if allorder:
             for order in allorder['orderList']:
+                print(order['dataSubmit'])
                 if re.search(dnow_reg, order['dataSubmit']):
                     sku_list.append(order['orderId'])
                     sku_name.append(order['shopName'])
@@ -195,6 +199,7 @@ async def get_todayorder(cookie):
         name = "文件名：" + os.path.split(__file__)[-1].split(".")[0]
         sign = f"{name}\n报错行数：{e.__traceback__.tb_lineno}行\n报错原因：{e}"
         print(sign)
+
 
 
 
