@@ -174,7 +174,7 @@ async def get_todayorder(cookie):
         if allorder:
             for order in allorder['orderList']:
                 print(order['dataSubmit'])
-                if re.search(dnow_reg, order['dataSubmit']):
+                if re.search(dnow_reg, order['dataSubmit']) and not re.search(r'取消|退款完成|退款成功', order['orderStatus']) :
                     sku_list.append(order['orderId'])
                     sku_name.append(order['shopName'])
                     orderStatus.append(order['orderStatus'])
