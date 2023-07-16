@@ -186,14 +186,14 @@ async def get_todayorder(cookie):
                         wname.append(order['orderMsg']['wareInfoList'][0]['wname'])
                     else:
                         wname.append('')
-        if sku_list:
-            mid = map(list, zip(sku_list, sku_name, orderStatus, dataSubmit, price, wareId, wname))
-            for item in mid:
-                orddict = dict(
-                    zip(['orderId', 'shopName', 'orderStatus', 'dataSubmit', 'price', 'wareId',
-                         'wname'], item))
-                ordlist.append(orddict)
-                # print(ordlist)
+        # if sku_list:
+        #     mid = map(list, zip(sku_list, sku_name, orderStatus, dataSubmit, price, wareId, wname))
+        #     for item in mid:
+        #         orddict = dict(
+        #             zip(['orderId', 'shopName', 'orderStatus', 'dataSubmit', 'price', 'wareId',
+        #                  'wname'], item))
+        #         ordlist.append(orddict)
+        #         # print(ordlist)
         return sku_list, wname,wareId
     except Exception as e:
         name = "文件名：" + os.path.split(__file__)[-1].split(".")[0]
