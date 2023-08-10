@@ -23,8 +23,23 @@ requests.packages.urllib3.disable_warnings()
 sys.path.append('../../tmp')
 #ip（改）
 
+
+###gettoday的time参数订单
 dnow = datetime.now().strftime('%Y-%m-%d')
 dnow_reg = re.compile(dnow)
+
+###########################################
+###fanli的time参数订单
+# 获取今天的日期
+today = datetime.today().date()
+# 设置起始时间为今天的开始
+start_time = datetime.combine(today, datetime.min.time())
+# 设置结束时间为今天的最后一刻
+end_time = datetime.combine(today, datetime.max.time())
+# 定义输出格式
+output_format = "%Y-%m-%d+%H:%M:%S"
+jinfenformatted_start_time = start_time.strftime(output_format)
+jinfenformatted_end_time = end_time.strftime(output_format)
 
 
 async def getRequest(method, url, data=None, headers=None, params=None, json=None, allow_redirects=False, timeout=30):
@@ -55,10 +70,9 @@ async def get_fl(cookie):
         if not cookie:
             print('获取京粉CK失败')
             return today,allday
-        dnow = (datetime.now()+timedelta(days=-1)).strftime('%Y-%m-%d %H:%M:%S')
-        dtnow = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        body = {"funName": "listOrderSku","unionId": "","param": {"startTime": dnow,"endTime": dtnow,"orderStatus": 0,"optType": 1,"unionRole": 1},"page": {"pageNo": 1,"pageSize": 100}}
-        url = f'https://api.m.jd.com/api?functionId=listOrderSku&_={dtnow}&appid=u&body={body}&loginType=2';
+        # 格式化日期和时间
+        body = {"funName": "listOrderSku","unionId": "","param": {"startTime": jinfenformatted_start_time,"endTime": jinfenformatted_end_time,"orderStatus": 0,"optType": 1,"unionRole": 1},"page": {"pageNo": 1,"pageSize": 100}}
+        url = f'https://api.m.jd.com/api?functionId=listOrderSku&_={jinfenformatted_end_time}&appid=u&body={body}&loginType=2';
         headers = {
             'Host': 'api.m.jd.com',
             'Accept': '*/*',
@@ -97,7 +111,6 @@ async def get_fl(cookie):
 
 
 
-
 async def userAgent():
     """
     随机生成一个UA
@@ -113,6 +126,7 @@ async def userAgent():
     iPhone = ''.join(sample(["8", "9", "10", "11", "12", "13"], 1))
     ADID = ''.join(sample('0987654321ABCDEF', 8)) + '-' + ''.join(sample('0987654321ABCDEF', 4)) + '-' + ''.join(sample('0987654321ABCDEF', 4)) + '-' + ''.join(sample('0987654321ABCDEF', 4)) + '-' + ''.join(sample('0987654321ABCDEF', 12))
     return f'jdapp;iPhone;10.0.4;{iosVer};{uuid};network/wifi;ADID/{ADID};model/iPhone{iPhone},1;addressid/{addressid};appBuild/167707;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS {iosV} like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/null;supportJDSHWK/1'
+
 
 
 async def get_todayorder(cookie):
@@ -168,8 +182,6 @@ async def get_todayorder(cookie):
             print(f'pin: {cookie}\t没有查到订单!')
             return ordlist
         allorder = {k: v for k, v in data.items() if k == 'orderList'}
-        dnow = datetime.now().strftime('%Y-%m-%d')
-        dnow_reg = re.compile(dnow)
         sku_list, sku_name, orderStatus, dataSubmit, price, wareId, wname = [], [], [], [], [], [], []
         if allorder:
             for order in allorder['orderList']:
@@ -186,14 +198,6 @@ async def get_todayorder(cookie):
                         wname.append(order['orderMsg']['wareInfoList'][0]['wname'])
                     else:
                         wname.append('')
-        # if sku_list:
-        #     mid = map(list, zip(sku_list, sku_name, orderStatus, dataSubmit, price, wareId, wname))
-        #     for item in mid:
-        #         orddict = dict(
-        #             zip(['orderId', 'shopName', 'orderStatus', 'dataSubmit', 'price', 'wareId',
-        #                  'wname'], item))
-        #         ordlist.append(orddict)
-        #         # print(ordlist)
         return sku_list, wname,wareId
     except Exception as e:
         name = "文件名：" + os.path.split(__file__)[-1].split(".")[0]
