@@ -340,7 +340,7 @@ async function showMsg() {
         method: 'POST',
         body: test_data
       };
-      $.get(options, (err, resp, data) => {
+      $.post(options, (err, resp, data) => {
         try {
           if (err) {
             $.logErr(err)
@@ -354,12 +354,6 @@ async function showMsg() {
     }
   }
 
-  if ($.isNode() && thefs.existsSync(thepath) && thenotifyTip) {
-    console.log("\n单账号一对一通知")
-    theMessage += `${$.message}`;
-    let thenotify = require(thepath);
-    await thenotify.sendNotify(`${$.name}`, `${theMessage}`);
-  }
 }
 async function bean() {
   // console.log(`北京时间零点时间戳:${parseInt((Date.now() + 28800000) / 86400000) * 86400000 - 28800000}`);
