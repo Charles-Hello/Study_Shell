@@ -310,7 +310,7 @@ async function showMsg() {
     //     }
     //   })
     // }
-    await send_message(wxid,result)
+    await send_message(wxid,ReturnMessage)
     }
   }
 
