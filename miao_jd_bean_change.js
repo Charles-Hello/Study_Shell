@@ -322,7 +322,7 @@ async function showMsg() {
         "action": "send_message",
         "params": {
             "detail_type": "private",
-            "user_id ": used_id,
+            "user_id ": wxid,
             "message": [
               {
                   "type": "text",
