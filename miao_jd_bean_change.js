@@ -392,18 +392,21 @@ async function send_message(wxid,result) {
       'Cache-Control': 'no-cache',
       'Accept': 'application/json',
     },
-    'body': JSON.stringify({
-      "detail_type": "private",
-      "user_id ": wxid,
-      "message": [
-        {
-            "type": "text",
-            "data": {
-              "text": result
+    "body": JSON.stringify({
+      "action": "send_message",
+      "params": {
+         "detail_type": "private",
+         "user_id": wxid,
+         "message": [
+            {
+               "type": "text",
+               "data": {
+                  "text": result
+               }
             }
-        }
-      ]
-  })
+         ]
+      }
+   })
   }
   new Promise(async resolve => {
     $.post(options, (err, resp, data) => {
