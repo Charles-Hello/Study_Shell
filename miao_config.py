@@ -59,8 +59,8 @@ Redis_ip = '192.168.1.155'  ## Redis地址
 Redis_port = '19736'  ## Redis端口，默认为6379
 Redis_pass = ''  ## Redis密码，无则不填
 # 主动调用发送接口
-API_URL = "http://192.168.1.51:8090"
-
+# API_URL = "http://192.168.1.51:8090"
+API_URL = "http://192.168.1.155:8000"
 
 # # 自行定义nolan服务器发送url
 # API_URL = "http://192.168.1.155:9191/api"
@@ -99,21 +99,43 @@ i = My_Redis(host=Redis_ip,port=Redis_port,password=Redis_pass)
 guid = i.Redis_get('guid')
 Authorization = i.Redis_get('Authorization')
 
-
-def send_text_msg(robot_wxid, to_wxid, msg):
-    headers = {
+headers = {
       'Name': 'iHttp',
       'Ver': "1.1.6.1",
       'Udid': '0b4891edc500803721b76cf782200fd3',
       'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36 Edg/97.0.1072.76',
 }
-    data = dict()
-    data["event"] = "SendTextMsg"
-    data["robot_wxid"] = robot_wxid
-    data["to_wxid"] = to_wxid
-    data["msg"] = msg
-    result = ujson.dumps(data)
-    return requests.post(url=API_URL, data=result, headers=headers)
+
+def send_text_msg(msg,used_id):
+
+    payload = ujson.dumps({
+      "action": "send_message",
+      "params": {
+          "detail_type": "private",
+          "private ": used_id,
+          "message": [
+            {
+                "type": "text",
+                "data": {
+                  "text": msg
+                }
+            }
+          ]
+      }
+    })
+
+    requests.post(API_URL, headers=headers, data=payload)
+
+
+# def send_text_msg(robot_wxid, to_wxid, msg):
+    
+#     data = dict()
+#     data["event"] = "SendTextMsg"
+#     data["robot_wxid"] = robot_wxid
+#     data["to_wxid"] = to_wxid
+#     data["msg"] = msg
+#     result = ujson.dumps(data)
+#     return requests.post(url=API_URL, data=result, headers=headers)
 
 # headers = {
 #         'accept': 'text/plain',

@@ -79,7 +79,7 @@ class ql_api():
                     pin = urllib.parse.unquote(pin)
                 if pin in g :
                     wxid = re.findall(f'{pin}\$(.*)',g)[0]
-                    send_text_msg(f'{user_id}',wxid, '你这个'+pin+'失效\n请再次登陆京东\n回复「教学」查看上车教学\n重新登陆即可\n输入「查询」查看总上车情况')
+                    send_text_msg(wxid, '你这个'+pin+'失效\n请再次登陆京东\n回复「教学」查看上车教学\n重新登陆即可\n输入「查询」查看总上车情况')
                     time.sleep(15)
     def get_status(self):
         params = (

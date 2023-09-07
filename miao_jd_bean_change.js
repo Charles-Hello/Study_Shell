@@ -280,18 +280,60 @@ async function showMsg() {
     // console.log('gg : '+gg)
     let wxid = wxidArray[a].replace('$', '')
     if (test.includes(gg)) {
+    //   console.log(wxid)
+    //   const API_URL = "http://192.168.1.51:8090/"
+    //   const headers = {
+    //     // 'Content-Type':'application/json',
+    //     'Host': '117.41.184.212:8090',
+    //     'Name': 'iHttp',
+    //     'Ver': '1.1.6.1',
+    //     'Udid': '0b4891edc500803721b76cf782200fd3'
+    //   };
+    //   const dataString = { "event": "SendTextMsg", "robot_wxid": "wxid_p8geau233z3412", "to_wxid": wxid, "msg": result };
+    //   const test_data = JSON.stringify(dataString)
+    //   // console.log(test_data)
+    //   const options = {
+    //     url: API_URL,
+    //     headers: headers,
+    //     method: 'POST',
+    //     body: test_data
+    //   };
+    //   $.get(options, (err, resp, data) => {
+    //     try {
+    //       if (err) {
+    //         $.logErr(err)
+    //       } else {
+    //         console.log('success')
+    //       }
+    //     } catch (e) {
+    //       $.logErr(e)
+    //     }
+    //   })
+    // }
       console.log(wxid)
-      const API_URL = "http://192.168.1.51:8090/"
+      const API_URL = "http://192.168.1.155:8000/"
       const headers = {
-        // 'Content-Type':'application/json',
         'Host': '117.41.184.212:8090',
         'Name': 'iHttp',
         'Ver': '1.1.6.1',
         'Udid': '0b4891edc500803721b76cf782200fd3'
       };
-      const dataString = { "event": "SendTextMsg", "robot_wxid": "wxid_p8geau233z3412", "to_wxid": wxid, "msg": result };
+      const dataString = {
+        "action": "send_message",
+        "params": {
+            "detail_type": "private",
+            "private ": used_id,
+            "message": [
+              {
+                  "type": "text",
+                  "data": {
+                    "text": result
+                  }
+              }
+            ]
+        }
+      };
       const test_data = JSON.stringify(dataString)
-      // console.log(test_data)
       const options = {
         url: API_URL,
         headers: headers,

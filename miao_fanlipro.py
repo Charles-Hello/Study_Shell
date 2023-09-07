@@ -293,8 +293,7 @@ def ck_to_Heaven(pin):
         if pin in data['data'][num]['value']:
             get_pin_id = data['data'][num]['id']
             print('奖励返利置顶：' + pin)
-            send_text_msg(user_id,
-                     tnanko, '奖励返利置顶：' + pin)
+            send_text_msg(tnanko, '奖励返利置顶：' + pin)
             #位置（可改）
             to_hell(7,num+1,get_pin_id)
 
@@ -408,11 +407,9 @@ def ck_dd(cookie):
                         a = f1.read()
                     if f'{get_ck}' in a:
                         to_wxid_pro = re.findall(f'{get_ck}\$(.*)', a)[0]
-                        send_text_msg(user_id,
-                                 to_wxid_pro,
+                        send_text_msg(to_wxid_pro,
                                  f'{get_ck}\n这个商品:\n{sku_name[e]}\n\n走了返利,ck已置顶')
-                    send_text_msg(user_id,
-                             tnanko,
+                    send_text_msg(tnanko,
                              f'{get_ck}\n这个商品:{sku_name[e]}\n\n走了返利,已置顶')
                     print(user_id,
                              tnanko,
@@ -425,11 +422,9 @@ def ck_dd(cookie):
                         a = f1.read()
                     if f'{get_ck}' in a:
                         to_wxid_pro = re.findall(f'{get_ck}\$(.*)', a)[0]
-                        send_text_msg(user_id,
-                                 to_wxid_pro,
+                        send_text_msg(to_wxid_pro,
                                  f'{get_ck}\n这个商品:\n{sku_name[e]}\n\n没有走返利\npin已被禁止挂机\n如有错误,请联系管理员解锁\n如果购买东西却没有置顶\n找群主发pin')
-                    send_text_msg(user_id,
-                             tnanko,
+                    send_text_msg(tnanko,
                              f'{get_ck}\n这个商品{sku_name[e]}:\n没有走返利,被标记')
                     print(f'{get_ck}\n这个商品:\n{sku_name[e]}\n没有走返利,被标记\n')
                     time.sleep(2)
