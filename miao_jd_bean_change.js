@@ -310,47 +310,7 @@ async function showMsg() {
     //     }
     //   })
     // }
-      console.log(wxid)
-      const API_URL = "http://192.168.1.51:8000/"
-      const headers = {
-        'Host': '117.41.184.212:8090',
-        'Name': 'iHttp',
-        'Ver': '1.1.6.1',
-        'Udid': '0b4891edc500803721b76cf782200fd3'
-      };
-      const dataString = {
-        "action": "send_message",
-        "params": {
-            "detail_type": "private",
-            "user_id ": wxid,
-            "message": [
-              {
-                  "type": "text",
-                  "data": {
-                    "text": result
-                  }
-              }
-            ]
-        }
-      };
-      const test_data = JSON.stringify(dataString)
-      const options = {
-        url: API_URL,
-        headers: headers,
-        method: 'POST',
-        body: test_data
-      };
-      $.post(options, (err, resp, data) => {
-        try {
-          if (err) {
-            $.logErr(err)
-          } else {
-            console.log('success')
-          }
-        } catch (e) {
-          $.logErr(e)
-        }
-      })
+    await send_message(wxid,result)
     }
   }
 
@@ -421,6 +381,47 @@ async function bean() {
   // console.log(`昨日收入：${$.incomeBean}个京豆 🐶`);
   // console.log(`昨日支出：${$.expenseBean}个京豆 🐶`)
 }
+
+
+async function send_message(wxid,result) {
+  const options = {
+    "url": `http://192.168.1.51:8000/`,
+    "headers": {
+      'Authority': 'cactus.jd.com',
+      'Pragma': 'no-cache',
+      'Cache-Control': 'no-cache',
+      'Accept': 'application/json',
+    },
+    'body': JSON.stringify({
+      "detail_type": "private",
+      "user_id ": wxid,
+      "message": [
+        {
+            "type": "text",
+            "data": {
+              "text": result
+            }
+        }
+      ]
+  })
+  }
+  new Promise(async resolve => {
+    $.post(options, (err, resp, data) => {
+      try {
+        if (err) {
+          console.log(`send_message错误\n`)
+        }  else {
+            console.log(`send_message成功`)
+          }
+      } catch (e) {
+        $.logErr(e, resp)
+      } finally {
+        resolve();
+      }
+    })
+  })
+}
+
 
 function GetJxBeanInfo() {
   return new Promise((resolve) => {
@@ -601,6 +602,13 @@ function TotalBean() {
     })
   })
 }
+
+
+
+
+
+
+
 
 function TotalBean2() {
   return new Promise(async (resolve) => {
