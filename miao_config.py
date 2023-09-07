@@ -109,20 +109,20 @@ headers = {
 def send_text_msg(msg,used_id):
 
     payload = ujson.dumps({
-      "action": "send_message",
-      "params": {
-          "detail_type": "private",
-          "user_id ": used_id,
-          "message": [
+    "action": "send_message",
+    "params": {
+        "detail_type": "private",
+        "user_id": used_id,
+        "message": [
             {
                 "type": "text",
                 "data": {
-                  "text": msg
+                    "text": msg
                 }
             }
-          ]
-      }
-    })
+        ]
+    }
+})
 
     requests.post(API_URL, headers=headers, data=payload)
 
