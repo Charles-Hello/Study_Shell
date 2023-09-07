@@ -311,7 +311,7 @@ async function showMsg() {
     //   })
     // }
       console.log(wxid)
-      const API_URL = "http://192.168.1.155:8000/"
+      const API_URL = "http://192.168.1.51:8000/"
       const headers = {
         'Host': '117.41.184.212:8090',
         'Name': 'iHttp',

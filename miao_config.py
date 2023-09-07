@@ -60,7 +60,7 @@ Redis_port = '19736'  ## Redis端口，默认为6379
 Redis_pass = ''  ## Redis密码，无则不填
 # 主动调用发送接口
 # API_URL = "http://192.168.1.51:8090"
-API_URL = "http://192.168.1.155:8000"
+API_URL = "http://192.168.1.51:8000"
 
 # # 自行定义nolan服务器发送url
 # API_URL = "http://192.168.1.155:9191/api"
