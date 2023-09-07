@@ -112,7 +112,7 @@ def send_text_msg(msg,used_id):
       "action": "send_message",
       "params": {
           "detail_type": "private",
-          "private ": used_id,
+          "user_id ": used_id,
           "message": [
             {
                 "type": "text",
