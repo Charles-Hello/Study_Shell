@@ -2,6 +2,8 @@
 
 #  青龙内网端口
 from miao_config import *
+import urllib.parse
+from jd_mysql import get_wxid_bypin
 class ql_api():
     def __init__(self):
 
@@ -59,27 +61,18 @@ class ql_api():
     
     def check_ck(self):
         data = self.get_status()
-        with open(wxid_file,'r') as f1:
-            g = f1.read()
-            
+
         for a in range(len((data['data']))):
             status = data['data'][a]['status']
             if status == 1:
                 ck = data['data'][a]['value']
                 print(ck)
                 pin = re.findall('pt_pin=(.*);',ck)[0]
-                import urllib.parse
-                def is_Chinese(word):
-                    for ch in word:
-                        if '\u4e00' <= ch <= '\u9fff':
-                            return True
-                    return False
-
-                if not is_Chinese(pin):
-                    pin = urllib.parse.unquote(pin)
-                if pin in g :
-                    wxid = re.findall(f'{pin}\$(.*)',g)[0]
-                    send_text_msg(wxid, '你这个'+pin+'失效\n请再次登陆京东\n回复「教学」查看上车教学\n重新登陆即可\n输入「查询」查看总上车情况')
+                #这里找到的是中文的编码
+                chinese_pin = urllib.parse.unquote(pin)
+                result = get_wxid_bypin(pin)
+                if result:
+                    send_text_msg(result, '你这个'+chinese_pin+'失效\n请再次登陆京东\n回复「教学」查看上车教学\n重新登陆即可\n输入「查询」查看总上车情况')
                     time.sleep(15)
     def get_status(self):
         params = (

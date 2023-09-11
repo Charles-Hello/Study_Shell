@@ -17,9 +17,10 @@ import asyncio
 from datetime import datetime,timedelta
 import httpx
 import aiohttp
-
 from miao_config import *
 requests.packages.urllib3.disable_warnings()
+import urllib.parse
+from jd_mysql import get_wxid_bypin
 sys.path.append('../../tmp')
 #ip（改）
 
@@ -378,54 +379,37 @@ async def get_yj(sj_id):
         return True
       
       
-def is_chinese(word: str) -> bool:
-    """
-    说明:
-        判断字符串是否为中文编码,如果是中文编码则为true，用unquote解码,纯正中文则为false，用quote编码
-    参数:
-        :param word: 文本
-    """
-    for ch in word:
-        if not "\u4e00" <= ch <= "\u9fff":
-            return True
-    return False
 
-import urllib.parse
+
+
 
 def ck_dd(cookie):
     get_ck = re.findall('pt_pin=(.*);', cookie)[0]
     sku_list, sku_name, yj_id=  asyncio.run(get_todayorder(cookie))
     print(f"这个{get_ck}的sku： {sku_list}")
     print(jin_list)
-    if is_chinese(get_ck):
-        get_ck = urllib.parse.unquote(get_ck)
+    chinese_ck = urllib.parse.unquote(get_ck)
     try:
         for e, gg in enumerate(sku_list):
             if asyncio.run(get_yj(yj_id[e])):
                 if int(gg) in jin_list:
-                    with open(wxid_file, 'r') as f1:
-                        a = f1.read()
-                    if f'{get_ck}' in a:
-                        to_wxid_pro = re.findall(f'{get_ck}\$(.*)', a)[0]
-                        send_text_msg(to_wxid_pro,
-                                 f'{get_ck}\n这个商品:\n{sku_name[e]}\n\n走了返利,ck已置顶')
+                    wxid = get_wxid_bypin(chinese_ck)
+                    if wxid:
+                        send_text_msg(wxid,
+                                 f'{chinese_ck}\n这个商品:\n{sku_name[e]}\n\n走了返利,ck已置顶')
                     send_text_msg(tnanko,
-                             f'{get_ck}\n这个商品:{sku_name[e]}\n\n走了返利,已置顶')
-                    print(user_id,
-                             tnanko,
-                             f'{get_ck}\n这个商品:\n\n走了返利,已置顶')
+                             f'{chinese_ck}\n这个商品:{sku_name[e]}\n\n走了返利,已置顶')
+                    print(f'{wxid}\n这个商品:\n\n走了返利,已置顶')
                     # 这里写置顶
                     ck_to_Heaven(get_ck)
                     break
                 else:
-                    with open(wxid_file, 'r') as f1:
-                        a = f1.read()
-                    if f'{get_ck}' in a:
-                        to_wxid_pro = re.findall(f'{get_ck}\$(.*)', a)[0]
-                        send_text_msg(to_wxid_pro,
-                                 f'{get_ck}\n这个商品:\n{sku_name[e]}\n\n没有走返利\npin已被禁止挂机\n如有错误,请联系管理员解锁\n如果购买东西却没有置顶\n找群主发pin')
+                    wxid = get_wxid_bypin(chinese_ck)
+                    if wxid:
+                        send_text_msg(wxid,
+                                 f'{chinese_ck}\n这个商品:\n{sku_name[e]}\n\n没有走返利\npin已被禁止挂机\n如有错误,请联系管理员解锁\n如果购买东西却没有置顶\n找群主发pin')
                     send_text_msg(tnanko,
-                             f'{get_ck}\n这个商品{sku_name[e]}:\n没有走返利,被标记')
+                             f'{chinese_ck}\n这个商品{sku_name[e]}:\n没有走返利,被标记')
                     print(f'{get_ck}\n这个商品:\n{sku_name[e]}\n没有走返利,被标记\n')
                     time.sleep(2)
                     # 这里写置底并且拉黑小黑屋

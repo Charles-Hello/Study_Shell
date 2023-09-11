@@ -16,7 +16,7 @@ import redis
 
 
 requests.packages.urllib3.disable_warnings()
-#默认走的是你config的auth认证(如有需要，则修改)
+# 默认走的是你config的auth认证(如有需要，则修改)
 with open(r'/ql/data/config/auth.json', 'r') as f2:
     token = f2.read()
 datapro = json.loads(token)
@@ -45,6 +45,20 @@ client_id = ['gPr_row88j6t', 'sYeg5TlEY-lu']
 client_secret = ['7yMcbSQJRc5r8w2Y-lVJ8C3N', '0nyo3LtBJMNE8z6bJI_wNXmE']
 #需要自动登陆面板的
 # 填写你的面板账号密码
+#--------------mysql数据库-----------------------
+
+jd_mysql_host = "127.0.0.1"
+jd_mysql_username = "root"
+jd_mysql_password = "aa114060"
+jd_mysql_database = "jddatabase"
+
+db_config = {
+        "host": jd_mysql_host,
+        "user": jd_mysql_username,
+        "password": jd_mysql_password,
+        "database": jd_mysql_database,
+}
+#--------------mysql数据库-----------------------
 username = '1140601003'
 password = 'ken1140601003@@@'
 dormitory = '12361142051@chatroom'
