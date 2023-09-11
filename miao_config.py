@@ -47,7 +47,7 @@ client_secret = ['7yMcbSQJRc5r8w2Y-lVJ8C3N', '0nyo3LtBJMNE8z6bJI_wNXmE']
 # 填写你的面板账号密码
 #--------------mysql数据库-----------------------
 
-jd_mysql_host = "127.0.0.1"
+jd_mysql_host = "192.168.1.155"
 jd_mysql_username = "root"
 jd_mysql_password = "aa114060"
 jd_mysql_database = "jddatabase"
