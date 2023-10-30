@@ -70,7 +70,7 @@ user_id = 'wxid_p8geau233z3412'
 taobao_fuli = '17573440617@chatroom'
 taobao_xianbao = '5739151628@chatroom'
 Redis_ip = '192.168.1.155'  ## Redis地址
-Redis_port = '19736'  ## Redis端口，默认为6379
+Redis_port = '6379'  ## Redis端口，默认为6379
 Redis_pass = ''  ## Redis密码，无则不填
 # 主动调用发送接口
 # API_URL = "http://192.168.1.51:8090"
