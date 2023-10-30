@@ -109,9 +109,9 @@ class My_Redis:
         return self.r.get(key)
       
 
-i = My_Redis(host=Redis_ip,port=Redis_port,password=Redis_pass)
-guid = i.Redis_get('guid')
-Authorization = i.Redis_get('Authorization')
+# i = My_Redis(host=Redis_ip,port=Redis_port,password=Redis_pass)
+# guid = i.Redis_get('guid')
+# Authorization = i.Redis_get('Authorization')
 
 headers = {
       'Name': 'iHttp',
